@@ -1,20 +1,17 @@
 {
-  "name": "backend",
+  "name": "common",
   "module": "index.ts",
   "type": "module",
-  "scripts": {
-    "start": "bun run index.ts"
-  },
   "devDependencies": {
     "@types/bun": "latest"
+  },
+  "exports": {
+    "./types": "./types.ts"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@types/express": "^5.0.0",
-    "express": "^4.21.2",
-    "common": "*",
-    "db": "*"
+    "zod": "^3.24.2"
   }
 }
