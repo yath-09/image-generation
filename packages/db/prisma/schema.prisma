@@ -26,6 +26,7 @@ model Model {
   name            String
   type            ModelTypeEnum
   age             Int
+  userId          String
   ethinicity      EthenecityEnum  
   eyeColor        EyeColorEnum
   bald            Boolean
@@ -54,6 +55,13 @@ model OutputImages {
   model     Model   @relation(fields: [modelId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  prompt    String
+  status    OutputImageStatus
+}
+enum OutputImageStatus {
+  PENDING
+  GENERATED
+  FAILED
 }
 
 model Packs {
