@@ -1,11 +1,14 @@
 import express from "express";
 import { TrainModel, GenerateImage, GenerateImagesFromPack } from "common/types";
 import { prismaClient } from "db";
-
+import {s3,write,S3Client} from "bun"
+import { FalAiModel } from "./models/FalAiModel";
 const port = process.env.PORT || 8080;
 const app = express();
 const USER_ID = "123";
 
+
+const falAiModel=new FalAiModel();
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -18,10 +21,13 @@ app.get("/health", (req, res) => {
 
 app.post("/ai/training", async (req, res) => {
   const parsedBody = TrainModel.safeParse(req.body);
+  const images=req.body.images;
   if (!parsedBody.success) {
     res.status(411).json({ message: "Input incorrect" });
     return;
   }
+
+  const {request_id,response_url}=await falAiModel.trainModel("",parsedBody.data.name);
   const data = await prismaClient.model.create({
     data: {
       name: parsedBody.data.name,
@@ -31,6 +37,7 @@ app.post("/ai/training", async (req, res) => {
       eyeColor: parsedBody.data.eyeColor,
       bald: parsedBody.data.bald,
       userId: USER_ID,
+      falAiRequestId: request_id,
     }
   });
   res.status(200).json({ modelId: data.id });
@@ -42,18 +49,17 @@ app.post("/ai/generate", async (req, res) => {
     res.status(411).json({ message: "Input incorrect" });
     return;
   }
+  const model=await prismaClient.model.findUnique({
+    where:{
+      id:parsedBody.data.modelId,
+    }
+  })
 
-  // const model = await prismaClient.model.findUnique({
-  //   where: {
-  //     id: parsedBody.data.modelId,
-  //     userId: USER_ID
-  //   }
-  // });
-
-  // if (!model) {
-  //   res.status(404).json({ message: "Model not found" });
-  //   return;
-  // }
+  if(!model || !model.tensorPath){
+    res.status(404).json({ message: "Model not found" });
+    return;
+  }
+  const {request_id,response_url}=await falAiModel.generateImage(parsedBody.data.prompt,model?.tensorPath);
 
   const data = await prismaClient.outputImages.create({
     data: {
@@ -61,6 +67,7 @@ app.post("/ai/generate", async (req, res) => {
       modelId: parsedBody.data.modelId,
       userId: USER_ID,
       status: "PENDING",
+      falAiRequestId: request_id,
     }
   })
 
