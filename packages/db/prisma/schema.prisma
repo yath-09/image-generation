@@ -33,12 +33,13 @@ model Model {
   triggerWord     String?
   tensorPath      String?
   thumbnail       String?
-  trainingImages  TrainingImages[]
+  // trainingImages  TrainingImages[]
   outputImages    OutputImages[]
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
   trainingStatus  ModelTrainingStatus @default(PENDING)
   falAiRequestId  String @default("")
+  zipUrl          String
   @@index([falAiRequestId])
   
 }
@@ -49,12 +50,12 @@ enum ModelTrainingStatus {
   FAILED
 }
 
-model TrainingImages {
-  id        String  @id   @default(uuid())
-  imageUrl  String  @default("")
-  modelId   String
-  model     Model   @relation(fields: [modelId], references: [id])
-}
+// model TrainingImages {
+//   id        String  @id   @default(uuid())
+//   imageUrl  String  @default("")
+//   modelId   String
+//   model     Model   @relation(fields: [modelId], references: [id])
+// }
 
 model OutputImages {
   id        String  @id   @default(uuid())

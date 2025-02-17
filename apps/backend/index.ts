@@ -19,6 +19,18 @@ app.get("/health", (req, res) => {
   res.send("Healthy server");
 });
 
+app.get("/presigned-url", async (req, res) => {
+  const key=`models/${Date.now()}_${Math.random()}.zip`;
+  const url =S3Client.presign(key, {
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3_SECRET_KEY,
+    endpoint: process.env.S3_ENDPOINT,
+    bucket: process.env.S3_BUCKET_NAME,
+    expiresIn: 60 * 5,
+  });
+  res.json({url,key});
+});
+
 app.post("/ai/training", async (req, res) => {
   const parsedBody = TrainModel.safeParse(req.body);
   const images=req.body.images;
@@ -27,7 +39,7 @@ app.post("/ai/training", async (req, res) => {
     return;
   }
 
-  const {request_id,response_url}=await falAiModel.trainModel("",parsedBody.data.name);
+  const {request_id,response_url}=await falAiModel.trainModel(parsedBody.data.zipUrl,parsedBody.data.name);
   const data = await prismaClient.model.create({
     data: {
       name: parsedBody.data.name,
@@ -37,6 +49,7 @@ app.post("/ai/training", async (req, res) => {
       eyeColor: parsedBody.data.eyeColor,
       bald: parsedBody.data.bald,
       userId: USER_ID,
+      zipUrl:parsedBody.data.zipUrl,
       falAiRequestId: request_id,
     }
   });
@@ -83,17 +96,22 @@ app.post("/pack/generate", async (req, res) => {
     return;
   }
 
-  const promts = await prismaClient.packPrompts.findMany({
+  const prompts = await prismaClient.packPrompts.findMany({
     where: {
       prompt: parsedBody.data.packId,
     }
   })
+
+
+  let requestIds:{request_id:string}[]=await Promise.all(prompts.map((prompt) => falAiModel.generateImage(prompt.prompt,parsedBody.data.modelId)))
+
   const images = await prismaClient.outputImages.createManyAndReturn({
-    data: promts.map((prompt) => ({
+    data: prompts.map((prompt,index) => ({
       prompt: prompt.prompt,
       modelId: parsedBody.data.modelId,
       userId: USER_ID,
       status: "PENDING",
+      falAiRequestId: requestIds[index].request_id,
     }))
   })
   res.status(200).json({
