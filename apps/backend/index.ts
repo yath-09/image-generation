@@ -6,10 +6,11 @@ import { FalAiModel } from "./models/FalAiModel";
 const port = process.env.PORT || 8080;
 const app = express();
 const USER_ID = "123";
-
+import cors from "cors";
 
 const falAiModel=new FalAiModel();
 app.use(express.json());
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("Healthy server");
@@ -22,11 +23,13 @@ app.get("/health", (req, res) => {
 app.get("/presigned-url", async (req, res) => {
   const key=`models/${Date.now()}_${Math.random()}.zip`;
   const url =S3Client.presign(key, {
+    method:"PUT",
     accessKeyId: process.env.S3_ACCESS_KEY,
     secretAccessKey: process.env.S3_SECRET_KEY,
     endpoint: process.env.S3_ENDPOINT,
     bucket: process.env.S3_BUCKET_NAME,
     expiresIn: 60 * 5,
+    type:"application/zip"
   });
   res.json({url,key});
 });
