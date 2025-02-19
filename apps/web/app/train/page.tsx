@@ -15,7 +15,7 @@ interface TrainingData {
 }
 
 import { TrainModelInput } from "common/infered"
-
+import { useAuth } from '@clerk/nextjs';
 export default function Train() {
     const [formData, setFormData] = useState<TrainingData>({
         name: '',
@@ -26,6 +26,8 @@ export default function Train() {
         bald: false,
         images: [],
     });
+
+    const {getToken}=useAuth(); 
 
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -67,7 +69,14 @@ export default function Train() {
             };
 
             //console.log(uploadData);
-            const response=await axios.post(`${BACKEND_URL}/ai/training`, uploadData);
+            const token=getToken();
+            const response=await axios.post(`${BACKEND_URL}/ai/training`, uploadData,
+                {
+                    headers:{
+                        token:`Bearer ${token}`
+                    }
+                }
+            );
             //console.log(response)
 
             //after successfull compeltion of the code
