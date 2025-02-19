@@ -36,7 +36,8 @@ app.get("/presigned-url", async (req, res) => {
 
 app.post("/ai/training", async (req, res) => {
   const parsedBody = TrainModel.safeParse(req.body);
-  const images=req.body.images;
+  //console.log(parsedBody.error)
+  //const images=req.body.images;
   if (!parsedBody.success) {
     res.status(411).json({ message: "Input incorrect" });
     return;
@@ -53,7 +54,7 @@ app.post("/ai/training", async (req, res) => {
       bald: parsedBody.data.bald,
       userId: USER_ID,
       zipUrl:parsedBody.data.zipUrl,
-      falAiRequestId: request_id,
+      falAiRequestId: request_id, //curnetl been set to "" to prevent the fal ai pricing 
     }
   });
   res.status(200).json({ modelId: data.id });

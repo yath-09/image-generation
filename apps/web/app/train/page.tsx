@@ -8,20 +8,22 @@ interface TrainingData {
     name: string;
     type: ModelTypeEnum;
     age: number;
-    ethnicity: EthenecityEnum;
+    ethinicity: EthenecityEnum;
     eyeColor: EyeColorEnum;
-    isBald: boolean;
+    bald: boolean;
     images: File[];
 }
+
+import { TrainModelInput } from "common/infered"
 
 export default function Train() {
     const [formData, setFormData] = useState<TrainingData>({
         name: '',
         type: ModelTypeEnum.Man,
         age: 0,
-        ethnicity: EthenecityEnum.White,
+        ethinicity: EthenecityEnum.White,
         eyeColor: EyeColorEnum.Brown,
-        isBald: false,
+        bald: false,
         images: [],
     });
 
@@ -42,7 +44,7 @@ export default function Train() {
             const zipBlob = await zip.generateAsync({ type: "blob" });
             // 2. Get the presigned URL from the backend for the ZIP file
             const { data } = await axios.get(`${BACKEND_URL}/presigned-url`);
-            console.log(data)
+            //console.log(data)
             if (!data.url || !data.key) {
                 throw new Error("Failed to get pre-signed URL");
             }
@@ -51,21 +53,22 @@ export default function Train() {
             await axios.put(data.url, zipBlob, {
                 headers: { "Content-Type": "application/zip" },
             });
+            alert("Images uplaoded succesfully");
 
-            // 4. Send form data with the ZIP file URL that is yet ot be implemeneted
+            // 4. Send form data with the ZIP file URL considering the imp point of mathcing the spellings of data with the backend
             const uploadData = {
                 name: formData.name,
                 type: formData.type,
                 age: formData.age,
-                ethnicity: formData.ethnicity,
+                ethinicity: formData.ethinicity,
                 eyeColor: formData.eyeColor,
-                isBald: formData.isBald,
-                zipFileUrl: data.url, // Store the ZIP file's S3 URL
+                bald: formData.bald,
+                zipUrl: data.url, // Store the ZIP file's S3 URL
             };
 
-            console.log(uploadData);
-            //await axios.post("http://localhost:8080/train-model", uploadData);
-  
+            //console.log(uploadData);
+            const response=await axios.post(`${BACKEND_URL}/ai/training`, uploadData);
+            //console.log(response)
 
             //after successfull compeltion of the code
             alert("Training data uploaded successfully");
@@ -93,9 +96,9 @@ export default function Train() {
             name: '',
             type: ModelTypeEnum.Man,
             age: 0,
-            ethnicity: EthenecityEnum.White,
+            ethinicity: EthenecityEnum.White,
             eyeColor: EyeColorEnum.Brown,
-            isBald: false,
+            bald: false,
             images: [],
         });
     };
@@ -151,18 +154,18 @@ export default function Train() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">Ethnicity</label>
+                        <label className="block text-sm font-medium text-gray-700">ethinicity</label>
                         <select
-                            value={formData.ethnicity}
+                            value={formData.ethinicity}
                             onChange={(e) =>
-                                setFormData({ ...formData, ethnicity: e.target.value as EthenecityEnum })
+                                setFormData({ ...formData, ethinicity: e.target.value as EthenecityEnum })
                             }
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                             required
                         >
-                            {Object.values(EthenecityEnum).map((ethnicity) => (
-                                <option key={ethnicity} value={ethnicity}>
-                                    {ethnicity.replace(/_/g, ' ')}
+                            {Object.values(EthenecityEnum).map((ethinicity) => (
+                                <option key={ethinicity} value={ethinicity}>
+                                    {ethinicity.replace(/_/g, ' ')}
                                 </option>
                             ))}
                         </select>
@@ -189,8 +192,8 @@ export default function Train() {
                     <div className="flex items-center space-x-2">
                         <input
                             type="checkbox"
-                            checked={formData.isBald}
-                            onChange={(e) => setFormData({ ...formData, isBald: e.target.checked })}
+                            checked={formData.bald}
+                            onChange={(e) => setFormData({ ...formData, bald: e.target.checked })}
                             className="h-4 w-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
                         />
                         <label className="text-sm font-medium text-gray-700">Is Bald</label>
@@ -211,7 +214,7 @@ export default function Train() {
                         <div className="mt-2 text-sm text-gray-500">
                             {formData.images.length} file(s) selected: {formData.images.map((file) => file.name).join(', ')}
                         </div>
-                    )} 
+                    )}
                 </div>
 
                 <div className="flex space-x-4">
