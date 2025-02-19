@@ -69,11 +69,11 @@ export default function Train() {
             };
 
             //console.log(uploadData);
-            const token=getToken();
+            const token=await getToken();
             const response=await axios.post(`${BACKEND_URL}/ai/training`, uploadData,
                 {
                     headers:{
-                        token:`Bearer ${token}`
+                        Authorization:`Bearer ${token}`
                     }
                 }
             );

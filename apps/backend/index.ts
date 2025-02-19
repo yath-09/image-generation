@@ -5,8 +5,9 @@ import {s3,write,S3Client} from "bun"
 import { FalAiModel } from "./models/FalAiModel";
 const port = process.env.PORT || 8080;
 const app = express();
-const USER_ID = "123";
+
 import cors from "cors";
+import { authMiddleware } from "./middleware";
 
 const falAiModel=new FalAiModel();
 app.use(express.json());
@@ -34,7 +35,7 @@ app.get("/presigned-url", async (req, res) => {
   res.json({url,key});
 });
 
-app.post("/ai/training", async (req, res) => {
+app.post("/ai/training",authMiddleware, async (req, res) => {
   const parsedBody = TrainModel.safeParse(req.body);
   //console.log(parsedBody.error)
   //const images=req.body.images;
@@ -52,7 +53,7 @@ app.post("/ai/training", async (req, res) => {
       ethinicity: parsedBody.data.ethinicity,
       eyeColor: parsedBody.data.eyeColor,
       bald: parsedBody.data.bald,
-      userId: USER_ID,
+      userId: req.userId!,
       zipUrl:parsedBody.data.zipUrl,
       falAiRequestId: request_id, //curnetl been set to "" to prevent the fal ai pricing 
     }
@@ -60,7 +61,7 @@ app.post("/ai/training", async (req, res) => {
   res.status(200).json({ modelId: data.id });
 });
 
-app.post("/ai/generate", async (req, res) => {
+app.post("/ai/generate",authMiddleware, async (req, res) => {
   const parsedBody = GenerateImage.safeParse(req.body);
   if (!parsedBody.success) {
     res.status(411).json({ message: "Input incorrect" });
@@ -82,7 +83,7 @@ app.post("/ai/generate", async (req, res) => {
     data: {
       prompt: parsedBody.data.prompt,
       modelId: parsedBody.data.modelId,
-      userId: USER_ID,
+      userId: req.userId!,
       status: "PENDING",
       falAiRequestId: request_id,
     }
@@ -93,7 +94,7 @@ app.post("/ai/generate", async (req, res) => {
   });
 });
 
-app.post("/pack/generate", async (req, res) => {
+app.post("/pack/generate",authMiddleware, async (req, res) => {
   const parsedBody = GenerateImagesFromPack.safeParse(req.body);
   if (!parsedBody.success) {
     res.status(411).json({ message: "Input incorrect" });
@@ -113,7 +114,7 @@ app.post("/pack/generate", async (req, res) => {
     data: prompts.map((prompt,index) => ({
       prompt: prompt.prompt,
       modelId: parsedBody.data.modelId,
-      userId: USER_ID,
+      userId: req.userId!,
       status: "PENDING",
       falAiRequestId: requestIds[index].request_id,
     }))
@@ -130,7 +131,7 @@ app.get("/pack/bulk", async (req, res) => {
     packs
   })
 });
-app.get("/image/bulk", async (req, res) => {
+app.get("/image/bulk",authMiddleware, async (req, res) => {
   const ids = req.query.images as string[];
 
   const limit = req.query.limit as string || "10";
@@ -140,7 +141,7 @@ app.get("/image/bulk", async (req, res) => {
       id: {
         in: ids,
       },
-      userId: USER_ID,
+      userId: req.userId!,
     },
     skip: parseInt(offset),
     take: parseInt(limit),
