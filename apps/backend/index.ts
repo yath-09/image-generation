@@ -134,7 +134,7 @@ app.get("/pack/bulk", async (req, res) => {
 app.get("/image/bulk",authMiddleware, async (req, res) => {
   const ids = req.query.images as string[];
 
-  const limit = req.query.limit as string || "10";
+  const limit = req.query.limit as string || "2";
   const offset = req.query.offset as string || "0";
   const imagesData = await prismaClient.outputImages.findMany({
     where: {
@@ -149,6 +149,19 @@ app.get("/image/bulk",authMiddleware, async (req, res) => {
   res.status(200).json({
     images: imagesData,
   })
+});
+
+
+app.get("/models", authMiddleware, async (req, res) => {
+  const models = await prismaClient.model.findMany({
+    where: {
+      OR: [{ userId: req.userId },{ open: true }],
+    },
+  });
+  // console.log(models)
+  res.json({
+    models,
+  });
 });
 
 app.post("/fal-ai/webhook/train", async (req, res) => {

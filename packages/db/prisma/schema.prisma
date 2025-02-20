@@ -40,6 +40,7 @@ model Model {
   trainingStatus  ModelTrainingStatus @default(PENDING)
   falAiRequestId  String @default("")
   zipUrl          String
+  open            Boolean    @default(false)
   @@index([falAiRequestId])
   
 }

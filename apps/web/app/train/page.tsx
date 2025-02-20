@@ -231,13 +231,13 @@ export default function Train() {
                     <button
                         type="button"
                         onClick={handleClearForm}
-                        className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                         className="bg-gradient-to-r from-gray-400 to-gray-600 text-white px-4 py-2 rounded transition-opacity hover:opacity-80"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
-                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        className="bg-gradient-to-r from-blue-400 to-yellow-600 text-white px-4 py-2 rounded transition-opacity hover:opacity-80"
                     >
                         Create Model
                     </button>

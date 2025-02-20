@@ -3,7 +3,7 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 export function Appbar() {
-    return <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    return <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-100 backdrop-blur-md border-b border-gray-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
                 <motion.div
@@ -12,7 +12,7 @@ export function Appbar() {
                     transition={{ duration: 0.5 }}
                     className="flex items-center"
                 >
-                    <span className="text-2xl font-semibold text-[#FBA87C]">Photo AI</span>
+                    <span className="text-2xl font-semibold bg-gradient-to-r from-blue-400 to-yellow-400 bg-clip-text text-transparent px-4 py-2 rounded transition-opacity hover:opacity-80">Photo AI</span>
                 </motion.div>
                 <motion.div
                     initial={{ opacity: 0, x: 20 }}
