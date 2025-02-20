@@ -133,24 +133,28 @@ app.get("/pack/bulk", async (req, res) => {
     packs
   })
 });
-app.get("/image/bulk",authMiddleware, async (req, res) => {
-  const ids = req.query.images as string[];
 
-  const limit = req.query.limit as string || "2";
+//getting the generated images
+app.get("/image/bulk",authMiddleware, async (req, res) => {
+  const ids = req.query.ids as string[];
+
+  const limit = req.query.limit as string || "20";
   const offset = req.query.offset as string || "0";
+
   const imagesData = await prismaClient.outputImages.findMany({
     where: {
-      id: {
-        in: ids,
-      },
+      // id: {
+      //   in: ids,
+      // },
       userId: req.userId!,
     },
     skip: parseInt(offset),
     take: parseInt(limit),
   });
   res.status(200).json({
-    images: imagesData,
-  })
+    images: imagesData.map(({ falAiRequestId, modelId, prompt, userId, updatedAt, ...rest }) => rest),
+});
+
 });
 
 

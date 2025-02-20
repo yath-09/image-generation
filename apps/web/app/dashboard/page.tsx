@@ -1,10 +1,11 @@
 "use client";
 import { useState, useRef } from "react";
 import { Tabs, TabsRef, Button } from "flowbite-react";
-import { Wand2, Brain, Package2 } from "lucide-react";
+import { Wand2, Brain, Package2,CameraIcon } from "lucide-react";
 import Generate from "../components/Generate";
 import Packs from "../components/Packs";
 import Train from "../train/page";
+import { Camera } from "../components/Camera";
 
 // // Components for each tab
 // const Generate = () => <div className="p-4 text-gray-800">Generate Content</div>;
@@ -25,6 +26,10 @@ export default function Dashboard() {
         ref={tabsRef}
         onActiveTabChange={(tab) => setActiveTab(tab)}
       >
+        <Tabs.Item active title="Camera" icon={CameraIcon}>
+          <Camera/>
+        </Tabs.Item>
+
         <Tabs.Item active title="Generate" icon={Wand2}>
           <Generate />
         </Tabs.Item>
