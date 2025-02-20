@@ -1,9 +1,9 @@
 import { fal } from "@fal-ai/client";
 import { BaseModel } from "./BaseModel";
 
-export class FalAiModel extends BaseModel {
+export class FalAiModel{
     constructor(){
-        super();
+        
     }
 
     public async generateImage(prompt:string,tensorPath:string){

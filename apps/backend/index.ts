@@ -100,16 +100,18 @@ app.post("/pack/generate",authMiddleware, async (req, res) => {
     res.status(411).json({ message: "Input incorrect" });
     return;
   }
+  //console.log(parsedBody.data.packId)
 
   const prompts = await prismaClient.packPrompts.findMany({
     where: {
-      prompt: parsedBody.data.packId,
+      packId: parsedBody.data.packId,
     }
   })
+  //console.log(prompts)
 
 
   let requestIds:{request_id:string}[]=await Promise.all(prompts.map((prompt) => falAiModel.generateImage(prompt.prompt,parsedBody.data.modelId)))
-
+  //console.log(requestIds)
   const images = await prismaClient.outputImages.createManyAndReturn({
     data: prompts.map((prompt,index) => ({
       prompt: prompt.prompt,

@@ -1,17 +1,31 @@
-import { BACKEND_URL } from "@/app/config";
-import { TPack } from "./PacksClient";
-import axios from "axios";
-import { PacksClient } from "./PacksClient"
-import { useEffect } from "react";
+"use client";
 
-async function getPacks(): Promise<TPack[]> {
-  const res = await axios.get(`${BACKEND_URL}/pack/bulk`);
-  return res.data.packs ?? [];
-}
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { BACKEND_URL } from "../config";
+import { PacksClient } from "./PacksClient";
+import { TPack } from "./PackCard";
 
 export default function Packs() {
-  //const packs = await getPacks();
- 
-   //console.log(packs);
-  return <PacksClient/>;
+    const [packs, setPacks] = useState<TPack[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [hasFetched, setHasFetched] = useState(false); 
+
+    useEffect(() => {
+        if (hasFetched) return; 
+
+        (async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/pack/bulk`);
+                setPacks(response.data.packs ?? []);
+                setHasFetched(true); // Set flag to prevent refetch
+            } catch (error) {
+                console.error("Error fetching packs:", error);
+            } finally {
+                setLoading(false);
+            }
+        })();
+    }, [hasFetched]); // Depend on `hasFetched` to avoid infinite calls
+
+    return <PacksClient packs={packs} loading={loading} />;
 }
