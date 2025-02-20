@@ -79,6 +79,9 @@ enum OutputImageStatus {
 model Packs {
   id        String   @id @default(uuid())
   name      String
+  description String @default("")
+  imageUrl1  String  @default("")
+  imageUrl2  String  @default("")
   prompts   PackPrompts[]
 }
 

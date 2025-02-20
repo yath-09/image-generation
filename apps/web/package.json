@@ -18,6 +18,7 @@
     "bun": "^1.2.2",
     "clsx": "^2.1.1",
     "common": "*",
+    "flowbite-react": "^0.10.2",
     "framer-motion": "^12.4.7",
     "jszip": "^3.10.1",
     "lucide-react": "^0.475.0",
