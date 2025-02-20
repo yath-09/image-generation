@@ -56,6 +56,7 @@ export default function Train() {
                 headers: { "Content-Type": "application/zip" },
             });
             alert("Images uplaoded succesfully");
+            
 
             // 4. Send form data with the ZIP file URL considering the imp point of mathcing the spellings of data with the backend
             const uploadData = {
