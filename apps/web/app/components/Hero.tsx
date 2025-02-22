@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import { Button } from "flowbite-react";
 import { HowItWorks } from "./HowItWorks";
 import { Features } from "./Features";
+import { Testimonials } from "./Testinomials";
 
 const Hero = () => {
     const router = useRouter();
     return (
         <div className="min-h-screen bg-white">
-            <main className="pt-10">
+            <main className="pt-8">
                 <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 py-16">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -22,11 +23,10 @@ const Hero = () => {
                             AI-Powered Photo Generation
                         </span>
                         <h1 className="text-5xl font-bold text-[#222222] mb-6">
-                            Generate Photos for you and your Family
+                            Transform your photos into <span className="bg-gradient-to-r from-blue-400 to-yellow-400 bg-clip-text text-transparent">AI-enhanced portraits</span>
                         </h1>
                         <p className="text-xl text-[#666666] max-w-2xl mx-auto">
-                            Create stunning, personalized family portraits using our advanced AI
-                            technology. Transform your memories into art.
+                        Photo AI helps you create stunning, AI-enhanced portraits effortlessly. Turn any photo into a masterpiece with our advanced AI technology.
                         </p>
                     </motion.div>
                     {/* <motion.div
@@ -47,7 +47,7 @@ const Hero = () => {
                             transition={{ duration: 0.7 }}
                         >
                             <h2 className="text-3xl font-semibold text-[#222222] mb-8">
-                                Start Creating Your Family Memories
+                                 Transform Your Photos with AI Magic
                             </h2>
                             <button className="bg-gradient-to-r from-blue-400 to-[#FBA87C] text-[#222222] px-8 py-3 rounded-full text-lg hover:cursor-pointer" onClick={() => router.push('/dashboard')}>
                                 Try Photo AI Now
@@ -59,7 +59,7 @@ const Hero = () => {
                 <HowItWorks />
 
                 <Features />
-                
+                <Testimonials/>
 
             </main>
         </div>
