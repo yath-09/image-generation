@@ -26,14 +26,12 @@ export function Appbar() {
                     <button className="text-[#444444] transition-colors hover:cursor-pointer">
                         Features
                     </button>
-                    <button className="bg-primary hover:bg-primary-dark text-text px-6 py-2 rounded-full transition-colors">
-                        <SignedOut>
-                            <SignInButton />
-                        </SignedOut>
-                        <SignedIn>
-                            <UserButton />
-                        </SignedIn>
-                    </button>
+                    <SignedOut>
+                        <div className="bg-amber-200 px-4 md:py-2 rounded-xl text-md bg-gradient-to-r from-blue-400 to-[#FBA87C] text-[#222222] hover:scale-105 hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl"><SignInButton /></div>
+                    </SignedOut>
+                    <SignedIn>
+                        <UserButton />
+                    </SignedIn>
                 </motion.div>
             </div>
         </div>

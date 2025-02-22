@@ -52,7 +52,7 @@ export function HowItWorks() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.2, duration: 0.5 }}
           >
-            <Card className="relative text-center p-6 rounded-xl bg-white border border-[#FBA87C] shadow-lg hover:cursor-pointer">
+            <Card className="relative text-center p-6 rounded-xl bg-white border border-[#FBA87C] shadow-lg hover:cursor-pointer hover:scale-105">
               <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-r from-blue-400 to-[#FBA87C] flex items-center justify-center">
                 {step.icon}
               </div>

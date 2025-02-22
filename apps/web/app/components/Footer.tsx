@@ -1,16 +1,29 @@
 import Link from "next/link";
 import { Button } from "flowbite-react";
 
+const Company=[
+    {Title:"About",href:"/"},
+    {Title:"Pricing",href:"/"},
+    {Title:"Blog",href:"/"},
+    {Title:"Careers",href:"/"}
+]
+const Help=[
+    {Title:"FAQ",href:"/"},
+    {Title:"Contact",href:"/"},
+    {Title:"Privacy",href:"/"},
+    {Title:"Terms",href:"/"}
+]
+
+
 export function Footer() {
   return (
     <footer className="w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto max-w-screen-xl px-4 pb-8 pt-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-screen-xl px-4 pb-8 pt-8 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Brand Section */}
           <div>
             <div className="flex items-center space-x-2">
-              
-              <span className="font-bold font-mono text-xl bg-gradient-to-r from-blue-400 to-yellow-400 bg-clip-text text-transparent">Photo Ai</span>
+              <span className="font-bold font-mono text-xl bg-gradient-to-r from-blue-400 to-yellow-400 bg-clip-text text-transparent">Photo AI</span>
             </div>
 
             <p className="mt-4 max-w-sm text-muted-foreground">
@@ -70,20 +83,18 @@ export function Footer() {
             <div className="space-y-4">
               <p className="font-medium">Company</p>
               <nav className="flex flex-col space-y-2">
-                <Link href="/">About</Link>
-                <Link href="/">Pricing</Link>
-                <Link href="/">Blog</Link>
-                <Link href="/">Careers</Link>
+                {Company.map((item,index)=>(
+                    <Link href={`${item.href}`} key={index} ><span className="hover:underline">{item.Title}</span></Link>
+                ))}
               </nav>
             </div>
 
             <div className="space-y-4">
               <p className="font-medium">Help</p>
               <nav className="flex flex-col space-y-2">
-                <Link href="/">FAQ</Link>
-                <Link href="/">Contact</Link>
-                <Link href="/">Privacy</Link>
-                <Link href="/">Terms</Link>
+                {Help.map((item,index)=>(
+                    <Link href={`${item.href}`} key={index} className="hover:underline">{item.Title}</Link>
+                ))}
               </nav>
             </div>
           </div>
