@@ -2,6 +2,9 @@
 import { motion } from "framer-motion";
 import { ImageCarousel } from "./ImageCarousel";
 import { useRouter } from "next/navigation";
+import { Button } from "flowbite-react";
+import { HowItWorks } from "./HowItWorks";
+import { Features } from "./Features";
 
 const Hero = () => {
     const router = useRouter();
@@ -46,12 +49,18 @@ const Hero = () => {
                             <h2 className="text-3xl font-semibold text-[#222222] mb-8">
                                 Start Creating Your Family Memories
                             </h2>
-                            <button className="bg-[#FBA87C] text-[#222222] px-8 py-3 rounded-full text-lg hover:cursor-pointer" onClick={()=>router.push('/dashboard')}>
+                            <button className="bg-gradient-to-r from-blue-400 to-[#FBA87C] text-[#222222] px-8 py-3 rounded-full text-lg hover:cursor-pointer" onClick={() => router.push('/dashboard')}>
                                 Try Photo AI Now
                             </button>
                         </motion.div>
                     </div>
                 </section>
+
+                <HowItWorks />
+
+                <Features />
+                
+
             </main>
         </div>
     );

@@ -3,7 +3,7 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 export function Appbar() {
-    return <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-100 backdrop-blur-md border-b border-gray-300">
+    return <nav className="fixed top-0 md:left-30 md:right-30 z-50 bg-gray-100 backdrop-blur-xl border-b border-gray-100 rounded-3xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
                 <motion.div
