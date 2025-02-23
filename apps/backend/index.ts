@@ -108,6 +108,18 @@ app.post("/pack/generate",authMiddleware, async (req, res) => {
     }
   })
   //console.log(prompts)
+  const model = await prismaClient.model.findFirst({
+    where: {
+      id: parsedBody.data.modelId,
+    },
+  });
+
+  if (!model) {
+    res.status(411).json({
+      message: "Model not found",
+    });
+    return;
+  }
 
 
   let requestIds:{request_id:string}[]=await Promise.all(prompts.map((prompt) => falAiModel.generateImage(prompt.prompt,parsedBody.data.modelId)))
@@ -118,6 +130,7 @@ app.post("/pack/generate",authMiddleware, async (req, res) => {
       modelId: parsedBody.data.modelId,
       userId: req.userId!,
       status: "PENDING",
+      imageUrl:"",
       falAiRequestId: requestIds[index].request_id,
     }))
   })
@@ -143,10 +156,16 @@ app.get("/image/bulk",authMiddleware, async (req, res) => {
 
   const imagesData = await prismaClient.outputImages.findMany({
     where: {
-      // id: {
-      //   in: ids,
-      // },
+      id: {
+        in: ids,
+      },
       userId: req.userId!,
+      status: {
+        not: "FAILED"
+      },
+    },
+    orderBy: {
+      createdAt: 'desc'
     },
     skip: parseInt(offset),
     take: parseInt(limit),
@@ -172,7 +191,7 @@ app.get("/models", authMiddleware, async (req, res) => {
 
 app.post("/fal-ai/webhook/train", async (req, res) => {
   console.log(req.body);
-  const requestId = req.body.request_id;
+  const requestId = req.body.request_id as string;
   if (!requestId) {
     res.status(400).json({
       message: "Request ID is required",
@@ -196,20 +215,36 @@ app.post("/fal-ai/webhook/train", async (req, res) => {
 
 
 app.post("/fal-ai/webhook/image", async (req, res) => {
-  console.log(req.body);
+  console.log("/fal-ai/webhook/image");
+  console.log(req.body)
   const requestId = req.body.request_id;
- 
+
+  //if error comes from the falai 
+  if (req.body.status === "ERROR") {
+    res.status(411).json({});
+    prismaClient.outputImages.updateMany({
+      where: {
+        falAiRequestId: requestId,
+      },
+      data: {
+        status: "FAILED",
+        imageUrl: req.body.payload.images[0].url,
+      },
+    });
+    return;
+  }
+  //if sucesfull
   await prismaClient.outputImages.updateMany({
     where: {
       falAiRequestId: requestId as string,
     },
     data: {
       status: "GENERATED",
-      imageUrl: req.body.image_url,
+      imageUrl: req.body.payload.images[0].url,
     }
   })
   res.status(200).json({
-    message: "Webhook received",
+    message: "Webhook received from the /image",
   })
 })
 
