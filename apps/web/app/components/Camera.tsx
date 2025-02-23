@@ -27,25 +27,34 @@ export function Camera() {
         })();
     }, []);
 
-    // Polling for Pending Images
-    // useEffect(() => {
-    //     const hasPending = images.some((img) => img.status.toLowerCase() !== "generated");
-    //     if (!hasPending) return; // Exit if no pending images
-
-    //     const interval = setInterval(async () => {
-    //         try {
-    //             const token = await getToken();
-    //             const response = await axios.get(`${BACKEND_URL}/image/bulk`, {
-    //                 headers: { Authorization: `Bearer ${token}` },
-    //             });
-    //             setImages(response.data.images);
-    //         } catch (error) {
-    //             console.error("Error polling images:", error);
-    //         }
-    //     }, 5000); // Poll every 5 seconds
-
-    //     return () => clearInterval(interval); // Cleanup on unmount
-    // }, [images]); // Only rerun if `images` changes
+     // Polling for Pending Images with max 3 polls
+    const[attempts,setAttempts] = useState(0);
+    const maxAttempts = 3;
+   
+    useEffect(() => {
+        const hasPending = images.some((img) => img.status.toLowerCase() === "pending");
+        if (!hasPending) return; // Exit if no pending images
+        const interval = setInterval(async () => {
+            if (attempts >= maxAttempts) {
+                clearInterval(interval); // Stop polling after 3 attempts
+                return;
+            }
+    
+            try {
+                const token = await getToken();
+                const response = await axios.get(`${BACKEND_URL}/image/bulk`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setImages(response.data.images);
+                setAttempts(prev=>prev+1); // Increment attempt count
+            } catch (error) {
+                console.error("Error polling images:", error);
+            }
+        }, 5000); // Poll every 5 seconds
+    
+        return () => clearInterval(interval);
+    }, [images]);
+    
 
     return (
         <>

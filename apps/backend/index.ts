@@ -8,6 +8,7 @@ const app = express();
 
 import cors from "cors";
 import { authMiddleware } from "./middleware";
+import { fal } from "@fal-ai/client";
 
 const falAiModel=new FalAiModel();
 app.use(express.json());
@@ -191,19 +192,27 @@ app.get("/models", authMiddleware, async (req, res) => {
 
 app.post("/fal-ai/webhook/train", async (req, res) => {
   console.log(req.body);
+
+  //this the request id given by the falai when hitting our webhook
   const requestId = req.body.request_id as string;
-  if (!requestId) {
-    res.status(400).json({
-      message: "Request ID is required",
-    })
-    return;
-  }
+ 
+
+  const result = await fal.queue.result("fal-ai/flux-lora", {
+    requestId,
+  });
+   //creating the thumbnail for the midel taht is there 
+  const { imageUrl } = await falAiModel.generateModelThumbnail(
+    result.data?.diffusers_lora_file.url
+  );
+
+
   await prismaClient.model.updateMany({
     where: {
       falAiRequestId: requestId as string,
     },
     data: {
-      tensorPath: req.body.tensor_path,
+      tensorPath: result.data?.diffusers_lora_file.url,
+      thumbnail: imageUrl,
       trainingStatus: "GENERATED",
     }
 
