@@ -42,8 +42,7 @@ export function SelectModel({
     }, []);
 
     return (
-        <div className="max-w-4xl">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-600">Select Model</h2>
+        <div className="max-w-4xl my-6">
             {modelLoading ? (
                 <div className="flex justify-center">
                     <Spinner aria-label="Large spinner example" size="lg" />
@@ -60,7 +59,7 @@ export function SelectModel({
                                 onClick={() => setSelectedModel(model.id)}
                             >
                                 <img src={model.thumbnail} alt={model.name} className="rounded-md w-full h-[80%]" />
-                                <h3 className={`text-center font-medium  h-[10%] ${selectedModel === model.id ? "text-white":"text-gray-800"}`}>{model.name}</h3>
+                                <h3 className={`text-center font-medium h-[10%] ${selectedModel === model.id ? "text-white":"text-gray-800"}`}>{model.name}</h3>
                             </div>
 
                         ))}

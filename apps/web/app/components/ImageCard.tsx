@@ -12,20 +12,9 @@ export function ImageCard({ id, status, imageUrl }: TImage) {
     const isGenerated = status.toLowerCase() === "generated" && imageUrl!=="";
 
     return (
-        <div className="rounded-xl border-2 max-w-[400px] cursor-pointer">
-            <div className="flex p-4 gap-4">
-                <img src={isGenerated ? imageUrl : DEFAULT_BLUR_IMAGE} className="rounded" alt="Generated preview" />
-            </div>
+        <div className="rounded-xl border-2 max-w-[400px] cursor-pointer flex p-1">
+                <img src={isGenerated ? imageUrl : DEFAULT_BLUR_IMAGE} className="rounded w-full" alt="Generated preview" />
         </div>
     );
 }
 
-export function ImageCardSkeleton() {
-    return (
-        <div className="rounded-xl border-2 max-w-[400px] p-2 cursor-pointer w-full">
-            <div className="flex p-4 gap-4">
-            <img src={DEFAULT_BLUR_IMAGE} className="rounded" alt="Generated preview" />
-            </div>
-        </div>
-    );
-}

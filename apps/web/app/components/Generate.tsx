@@ -41,10 +41,14 @@ export default function Generate() {
   };
 
   return (
-    <div className="flex justify-center min-h-screen p-6">
+    <div className="flex justify-center p-6">
       <div className="w-full max-w-lg bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold text-center mb-4 text-[#444444]">Generate AI Image</h2>
+        <h2 className="text-xl font-semibold text-center mb-6 text-[#444444]">Generate AI Image</h2>
+        <h2 className="text-3xl font-semibold mb-2 text-black">Step-1 Select Model</h2>
+        <h6 className=" mb-4 text-gray-600">Choose an AI model to generate your images</h6>
+        
         <SelectModel selectedModel={selectedModel} setSelectedModel={setSelectedModel} />
+         
         <div className="mt-4">
           <textarea
             value={prompt}

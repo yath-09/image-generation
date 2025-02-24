@@ -3,7 +3,7 @@ import { useAuth } from "@clerk/nextjs";
 import { BACKEND_URL } from "@/app/config";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { ImageCard, ImageCardSkeleton, TImage } from "./ImageCard";
+import { ImageCard, TImage } from "./ImageCard";
 
 export function Camera() {
     const [images, setImages] = useState<TImage[]>([]);
@@ -27,10 +27,10 @@ export function Camera() {
         })();
     }, []);
 
-     // Polling for Pending Images with max 3 polls
-    const[attempts,setAttempts] = useState(0);
+    // Polling for Pending Images with max 3 polls
+    const [attempts, setAttempts] = useState(0);
     const maxAttempts = 3;
-   
+
     useEffect(() => {
         const hasPending = images.some((img) => img.status.toLowerCase() === "pending");
         if (!hasPending) return; // Exit if no pending images
@@ -39,35 +39,36 @@ export function Camera() {
                 clearInterval(interval); // Stop polling after 3 attempts
                 return;
             }
-    
+
             try {
                 const token = await getToken();
                 const response = await axios.get(`${BACKEND_URL}/image/bulk`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setImages(response.data.images);
-                setAttempts(prev=>prev+1); // Increment attempt count
+                setAttempts(prev => prev + 1); // Increment attempt count
             } catch (error) {
                 console.error("Error polling images:", error);
             }
         }, 5000); // Poll every 5 seconds
-    
+
         return () => clearInterval(interval);
     }, [images]);
-    
+
 
     return (
         <>
-        <div className="grid md:grid-cols-4 grid-cols-1 gap-2 pt-4">
-            {images.map((image) => (
-                <ImageCard key={image.id} {...image} />
-            ))}
-        </div>
-        {imagesLoading && (
-            <div className="flex items-center w-full justify-center">
-                <SkeletonLoader/>
+            <div className="grid md:grid-cols-4 grid-cols-2 gap-2 pt-4">
+                {images.map((image) => (
+                    <ImageCard key={image.id} {...image} />
+                    // <ImageCardSkeleton/>
+                ))}
             </div>
-        )}
+            {imagesLoading && (
+                <div className="flex items-center w-full justify-center">
+                    <SkeletonLoader />
+                </div>
+            )}
         </>
     );
 }
@@ -76,4 +77,4 @@ export function Camera() {
 export function SkeletonLoader() {
     return <div className="animate-pulse bg-gray-300 rounded-md h-10 w-full" />;
 }
-  
+
