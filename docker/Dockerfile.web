@@ -1,0 +1,17 @@
+FROM oven/bun:1
+
+WORKDIR /usr/src/app
+
+COPY . . 
+
+RUN bun install
+
+ENV NODE_ENV=production
+
+EXPOSE 3000
+
+CMD ["bun","run","start:web"]
+
+
+# docker run -d -p 3000:3000 --env-file .env your-dockerhub-username/your-image-name:latest
+
