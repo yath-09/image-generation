@@ -8,7 +8,7 @@ import { Spinner } from "flowbite-react";
 import { ImagePlus } from "lucide-react";
 import { BACKEND_URL } from "../config";
 
-export default function Generate() {
+export default function Generate({setActiveTab}) {
   const [prompt, setPrompt] = useState("");
   const [selectedModel, setSelectedModel] = useState<string>();
   const [loading, setLoading] = useState(false);
@@ -33,6 +33,7 @@ export default function Generate() {
       );
       toast.success("Image generation in progress!");
       setPrompt("");
+      setActiveTab(0)
     } catch (error) {
       toast.error("Failed to generate image. Please try again.");
     } finally {

@@ -55,7 +55,7 @@ export function Camera() {
         return () => clearInterval(interval);
     }, [images]);
 
-
+    console.log(images)
     return (
         <>
             <div className="grid md:grid-cols-4 grid-cols-2 gap-2 pt-4">
@@ -75,6 +75,11 @@ export function Camera() {
 
 
 export function SkeletonLoader() {
-    return <div className="animate-pulse bg-gray-300 rounded-md h-10 w-full" />;
-}
+    return (
+      <div className="relative overflow-hidden bg-gray-200 rounded-md h-10 w-full">
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-900 animate-shimmer" />
+      </div>
+    );
+  }
+  
 

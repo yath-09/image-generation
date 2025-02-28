@@ -7,10 +7,10 @@ import Train from "../train/page";
 import { Camera } from "../components/Camera";
 
 const tabs = [
-  { title: "Camera", icon: CameraIcon, component: <Camera /> },
-  { title: "Generate", icon: Wand2, component: <Generate /> },
-  { title: "Train", icon: Brain, component: <Train /> },
-  { title: "Packs", icon: Package2, component: <Packs /> },
+  { title: "Camera", icon: CameraIcon, component: "Camera" },
+  { title: "Generate", icon: Wand2, component: "Generate" },
+  { title: "Train", icon: Brain, component: "Train" },
+  { title: "Packs", icon: Package2, component:"Packs" },
 ];
 
 export default function Dashboard() {
@@ -47,7 +47,11 @@ export default function Dashboard() {
           />
         </div>
       
-        <div className="mt-6">{tabs[activeTab]?.component}</div>
+        <div className="mt-6">
+          {activeTab === 0 && <Camera />}
+          {activeTab === 1 && <Generate setActiveTab={setActiveTab} />}
+          {activeTab === 2 && <Train />}
+          {activeTab === 3 && <Packs/>}</div>
       </div>
     </div>
   );
