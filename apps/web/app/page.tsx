@@ -1,5 +1,4 @@
 
-import { Button } from "@repo/ui/button";
 import Hero  from "./components/Hero";
 
 export default function Home() {

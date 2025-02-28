@@ -1,4 +1,5 @@
 
+
 export interface TImage {
     id: string;
     status: string;
@@ -8,7 +9,7 @@ export interface TImage {
 const DEFAULT_BLUR_IMAGE =
     "https://static.vecteezy.com/system/resources/thumbnails/016/894/217/small/white-background-white-polished-metal-abstract-white-gradient-background-blurred-white-backdrop-illustration-vector.jpg";
 
-export function ImageCard({ id, status, imageUrl }: TImage) {
+export function ImageCard({ status, imageUrl }: TImage) {
     const isGenerated = status.toLowerCase() === "generated" && imageUrl!=="";
 
     return (

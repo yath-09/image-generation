@@ -25,7 +25,7 @@ export function Camera() {
                 setImagesLoading(false);
             }
         })();
-    }, []);
+    },[]);
 
     // Polling for Pending Images with max 3 polls
     const [attempts, setAttempts] = useState(0);

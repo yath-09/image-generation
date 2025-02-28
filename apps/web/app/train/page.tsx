@@ -13,8 +13,6 @@ interface TrainingData {
     bald: boolean;
     images: File[];
 }
-
-import { TrainModelInput } from "common/infered"
 import { useAuth } from '@clerk/nextjs';
 export default function Train() {
     const [formData, setFormData] = useState<TrainingData>({
@@ -92,10 +90,10 @@ export default function Train() {
 
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
+        if (e.target.files &&  e.target.files.length > 0) {
             setFormData((prev) => ({
                 ...prev,
-                images: Array.from(e.target.files),
+                images: Array.from(e.target.files as FileList),
             }));
         }
         //console.log(e.target.files);

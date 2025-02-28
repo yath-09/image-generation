@@ -4,7 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 import { SelectModel } from "./Models";
 import toast from "react-hot-toast";
-import { Textarea, Button, Spinner } from "flowbite-react";
+import { Spinner } from "flowbite-react";
 import { ImagePlus } from "lucide-react";
 import { BACKEND_URL } from "../config";
 

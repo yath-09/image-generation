@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
-import { Spinner, Card } from "flowbite-react";
+import { Spinner} from "flowbite-react";
 
 interface TModel {
     id: string;

@@ -2,11 +2,9 @@
 import { motion } from "framer-motion";
 import { ImageCarousel } from "./ImageCarousel";
 import { useRouter } from "next/navigation";
-import { Button } from "flowbite-react";
 import { HowItWorks } from "./HowItWorks";
 import { Features } from "./Features";
 import { Testimonials } from "./Testinomials";
-import { ArrowRight } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 
 const Hero = () => {
