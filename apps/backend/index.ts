@@ -1,7 +1,7 @@
 import express from "express";
 import { TrainModel, GenerateImage, GenerateImagesFromPack } from "common/types";
 import { prismaClient } from "db";
-import {s3,write,S3Client} from "bun"
+import {S3Client} from "bun"
 import { FalAiModel } from "./models/FalAiModel";
 const port = process.env.PORT || 8080;
 const app = express();
@@ -123,7 +123,7 @@ app.post("/pack/generate",authMiddleware, async (req, res) => {
   }
 
 
-  let requestIds:{request_id:string}[]=await Promise.all(prompts.map((prompt) => falAiModel.generateImage(prompt.prompt,parsedBody.data.modelId)))
+  let requestIds:{request_id:string}[]=await Promise.all(prompts.map((prompt) => falAiModel.generateImage(prompt.prompt,model?.tensorPath || "")))
   //console.log(requestIds)
   const images = await prismaClient.outputImages.createManyAndReturn({
     data: prompts.map((prompt,index) => ({

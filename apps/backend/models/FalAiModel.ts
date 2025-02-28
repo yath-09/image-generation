@@ -13,8 +13,10 @@ export class FalAiModel{
         //         prompt:prompt,
         //         loras:[{path:tensorPath,scale:1}]
         //     },
-        //     webhookUrl:`${process.env.WEBHOOK_BASE_URL}/fal-ai/webhook/image`
+        //     webhookUrl:`${process.env.WEBHOOK_BASE_URL}/fal-ai/webhook/image`  
         // })
+
+        // the base url is now a microservcie worker  running for the image updation 
 
         // the webhook url is thecalback url that will be hit but there is no one right now as local host is not ccesible by the falai
 
