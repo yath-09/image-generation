@@ -6,15 +6,15 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const images = [
   {
-    url: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+    url: "https://v3.fal.media/files/lion/uAxE98jeacYujt9zTb6k__95a559520afe484fb0e0a5c25f9b551c.jpg",
     caption: "Family Moments",
   },
   {
-    url: "https://images.unsplash.com/photo-1500673922987-e212871fec22",
-    caption: "Precious Memories",
+    url: "https://v3.fal.media/files/kangaroo/G7Zmy7A2sS8r_FAa0cjQ5_e8024d641d434742b3184476615b2f3e.jpg",
+    caption: "Great experiences",
   },
   {
-    url: "https://images.unsplash.com/photo-1582562124811-c09040d0a901",
+    url: "https://v3.fal.media/files/koala/jzcw0ODy484aVn6qCE-sC_7cb37c397f8e47c49469bea159ef0705.jpg",
     caption: "Special Times",
   },
 ];

@@ -16,7 +16,7 @@ const Hero = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7 }}
+                        transition={{ duration: 1.5 }}
                         className="text-center mb-16"
                     >
                         <span className="inline-block bg-primary/30 text-[#444444] px-4 py-1 rounded-full text-sm mb-4">
@@ -37,7 +37,7 @@ const Hero = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.7 }}
+                            transition={{ duration: 1.5 }}
                         >
                             <h2 className="text-3xl font-semibold text-[#222222] mb-8">
                                 Transform Your Photos with AI Magic
