@@ -1,46 +1,87 @@
-Photo AI-   AI-Powered Photo Generation
 
-Tech Stack
-Frontend: Next.js 14 (App Router), TypeScript, Tailwind CSS,S3 for model images 
-Backend: Node.js with TypeScript
-Authentication: Clerk
-Containerization: Docker
-Package Management: Bun
-Monorepo Management: Turborepo
+---
 
+### **📸 Photo AI - AI-Powered Photo Generation**  
+Photo AI helps you create stunning, AI-enhanced portraits effortlessly. Turn any photo into a masterpiece with our advanced AI technology.
 
-Project Structure
+---
+
+## 🚀 **Tech Stack**  
+### **Frontend**  
+- **Next.js 14** (App Router)  
+- **TypeScript**  
+- **Tailwind CSS**  
+- **S3** (for storing model images)  
+
+### **Backend**  
+- **Node.js** with TypeScript  
+
+### **Authentication**  
+- **Clerk**  
+
+### **Infrastructure**  
+- **Docker** (Containerization)  
+- **Bun** (Package Management)  
+- **Turborepo** (Monorepo Management)  
+
+---
+
+## 📂 **Project Structure**  
+
+```
 .
-├── apps
+├── apps/
 │   ├── web/                 # Next.js frontend
-│   └── backend/            # Node.js backend with bun
-├── packages
-│   ├── db/                 # Shared UI components
-│   ├── typescript-config/  # Shared TS config
-│   └── eslint-config/     # Shared ESLint config
-├── docker/                # Docker configuration
-│   ├── Dockerfile.frontend
-│   └── Dockerfile.backend
+│   ├── backend/             # Node.js backend (Bun)
+├── packages/
+│   ├── db/                  # Shared database utilities
+│   ├── typescript-config/   # Shared TypeScript config
+│   ├── eslint-config/       # Shared ESLint config
+├── docker/
+│   ├── Dockerfile.frontend  # Frontend Docker configuration
+│   ├── Dockerfile.backend   # Backend Docker configuration
 └── package.json
+```
 
-Local Development
+---
 
-# Install dependencies
+## 🛠 **Setup & Local Development**  
+
+### **1️⃣ Install Dependencies**  
+```sh
 bun install
+```
 
-# Run development servers
+### **2️⃣ Run Development Servers**  
+```sh
 bun run dev
+```
 
-# Build all packages
+### **3️⃣ Build All Packages**  
+```sh
 bun run build
+```
 
-Development Commands
+---
 
-# Run frontend only
-bun run start:web
+## 📌 **Development Commands**  
 
-# Run backend only
-bun run start:backend
+| Command                | Description                          |
+|------------------------|--------------------------------------|
+| `bun run start:web`    | Run **frontend only** (Next.js)      |
+| `bun run start:backend` | Run **backend only** (Node.js)      |
+| `bun run dev`          | Run **both frontend & backend**     |
 
-# Run both frontend and backend
-bun run dev
+## 🎯 **Contributing**  
+1. **Fork the repository**  
+2. **Create a new branch** (`feature/new-feature`)  
+3. **Commit your changes** (`git commit -m "Add new feature"`)  
+4. **Push to the branch** (`git push origin feature/new-feature`)  
+5. **Submit a Pull Request** 🚀  
+
+---
+
+## 📜 **License**  
+This project is licensed under the **MIT License**.  
+
+---
