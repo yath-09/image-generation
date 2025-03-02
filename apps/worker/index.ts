@@ -13,7 +13,7 @@ app.use(cors());
 const PORT = process.env.PORT || 8000;
 
 app.get("/", (req, res) => {
-  res.send("Fal AI Webhook Service Running!");
+  res.send("Webhook Service Running!");
 });
 
 app.use(webhookRoutes);

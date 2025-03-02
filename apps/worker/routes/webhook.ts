@@ -3,8 +3,10 @@ import { prismaClient } from "db";
 import express from "express";
 const router = express.Router();
 import {fal} from '@fal-ai/client'
-import { FalAiModel } from "./FalAiModel";
 import { Webhook } from "svix";
+import { FalAiModel } from "backend";
+
+const falAiModel=new FalAiModel();
 
 router.post("/fal-ai/webhook/train", async (req, res) => {
     console.log("webhook received for /fal-ai/webhook/train")
@@ -17,9 +19,10 @@ router.post("/fal-ai/webhook/train", async (req, res) => {
         requestId,
     });
     //creating the thumbnail for the model that is there 
-    // const { imageUrl } = await FalAiModel.generateModelThumbnail(
-    //     result.data?.diffusers_lora_file.url
-    // );
+    
+    const { imageUrl } = await falAiModel.generateModelThumbnail(
+      (result.data as any)?.diffusers_lora_file?.url 
+    );
     await prismaClient.model.updateMany({
         where: {
             falAiRequestId: requestId as string,

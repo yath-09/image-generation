@@ -12,6 +12,9 @@
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
+  "exports": {
+    ".": "./models/FalAiModel.ts"
+  },
   "dependencies": {
     "@fal-ai/client": "^1.2.3",
     "@types/cors": "^2.8.17",
