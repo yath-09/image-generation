@@ -9,7 +9,8 @@
     "check-types": "turbo run check-types",
     "start:web": "cd ./apps/web && bun run dev",
     "start:backend": "cd ./apps/backend && bun run dev",
-     "generate:db": "cd ./packages/db && bunx prisma generate && cd ../.."
+    "start:worker":"cd ./apps/worker && npm run dev",
+    "generate:db": "cd ./packages/db && bunx prisma generate && cd ../.."
   },
   "devDependencies": {
     "prettier": "^3.5.0",
