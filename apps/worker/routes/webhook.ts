@@ -139,6 +139,7 @@ router.post("/api/webhook/clerk", async (req, res) => {
               profilePicture: evt.data.profile_image_url,
             },
           });
+          console.log("User created/updated")
           break;
         }
   
@@ -146,6 +147,7 @@ router.post("/api/webhook/clerk", async (req, res) => {
           await prismaClient.user.delete({
             where: { clerkId: id },
           });
+          console.log("User deleted")
           break;
         }
   
