@@ -38,15 +38,15 @@ export function ImageCard({ id, status, imageUrl }: TImage) {
                 onClick={() => setIsOpen(true)}
             >
                 <img
-                    src={isGenerated ? imageUrl : DEFAULT_BLUR_IMAGE}
-                    className="rounded w-full"
+                    src={isGenerated ?imageUrl :"/gear-spinner.svg" }
+                    className="rounded w-full h-[150px]"
                     alt="Generated preview"
                 />
             </div>
 
-            {isOpen && (
+            {isOpen && isGenerated && (
                 <div className="fixed inset-0 bg-gray-400 bg-opacity-40 flex items-center justify-center z-50">
-                    <div className="bg-white p-5 rounded-lg shadow-lg max-w-lg w-full relative">
+                    <div className="bg-white p-5 rounded-lg shadow-lg max-w-lg w-[80%] relative md:w-full">
                         <button
                             className="absolute top-0 right-0 text-gray-700 hover:text-black hover:cursor-pointer"
                             onClick={() => setIsOpen(false)}
