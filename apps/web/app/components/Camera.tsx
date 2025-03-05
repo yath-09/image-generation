@@ -1,5 +1,5 @@
 "use client";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { BACKEND_URL } from "@/app/config";
 import axios from "axios";
 import { useEffect, useState } from "react";

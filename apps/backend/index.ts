@@ -8,7 +8,7 @@ const app = express();
 
 import cors from "cors";
 import { authMiddleware } from "./middleware";
-import { fal } from "@fal-ai/client";
+
 
 const falAiModel=new FalAiModel();
 app.use(express.json());
@@ -181,7 +181,7 @@ app.get("/image/bulk",authMiddleware, async (req, res) => {
 app.get("/models", authMiddleware, async (req, res) => {
   const models = await prismaClient.model.findMany({
     where: {
-      OR: [{ userId: req.userId },{ open: true }],
+      OR: [{ userId: req.userId },{ open: true }],//open for globaly avaialable 
     },
   });
   // console.log(models)
