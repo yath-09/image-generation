@@ -61,14 +61,14 @@ router.post("/fal-ai/webhook/image", async (req, res) => {
     return;
   }
   //if sucesfull first  decrement the credits
-  // First find the model to get the userId
-  const model = await prismaClient.model.findFirst({
+  // First find the image to get the userId
+  const outputImages = await prismaClient.outputImages.findFirst({
     where: {
       falAiRequestId: requestId,
     },
   });
 
-  if (!model) {
+  if (!outputImages) {
     console.error("No model found for requestId:", requestId);
     res.status(404).json({ message: "Model not found" });
     return;
@@ -76,7 +76,7 @@ router.post("/fal-ai/webhook/image", async (req, res) => {
 
   await prismaClient.userCredit.update({
     where: {
-      userId: model.userId,
+      userId: outputImages.userId,
     },
     data: {
       amount: { decrement: IMAGE_GENERATION_CREDITS },
@@ -85,7 +85,7 @@ router.post("/fal-ai/webhook/image", async (req, res) => {
 
   console.log(
     "Updated model and decremented credits for user:",
-    model.userId
+    outputImages.userId
   );
 
   await prismaClient.outputImages.updateMany({
