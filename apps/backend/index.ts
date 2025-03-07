@@ -91,7 +91,7 @@ app.post("/ai/generate",authMiddleware, async (req, res) => {
   );
 
   if((credits?.amount || 0)<IMAGE_GENERATION_CREDITS){
-    res.status(411).json({
+    res.status(402).json({
       message:"Not enough credits",
     })
     return;
@@ -108,6 +108,14 @@ app.post("/ai/generate",authMiddleware, async (req, res) => {
       falAiRequestId: request_id,
     }
   })
+  await prismaClient.userCredit.update({
+    where: {
+      userId: req.userId!,
+    },
+    data: {
+      amount: { decrement: IMAGE_GENERATION_CREDITS },
+    },
+  });
 
   res.status(200).json({
     imageId: data.id,
@@ -142,6 +150,23 @@ app.post("/pack/generate",authMiddleware, async (req, res) => {
   }
 
 
+  //check  with the credits for the user to generate image in packs
+  const credits=await prismaClient.userCredit.findUnique(
+    {
+      where:{
+        userId:req.userId!,
+      }
+    }
+  );
+
+  if((credits?.amount || 0)<(IMAGE_GENERATION_CREDITS*prompts.length)){
+    res.status(402).json({
+      message:"Not enough credits",
+    })
+    return;
+  }
+
+
   let requestIds:{request_id:string}[]=await Promise.all(prompts.map((prompt) => falAiModel.generateImage(prompt.prompt,model?.tensorPath || "")))
   //console.log(requestIds)
   const images = await prismaClient.outputImages.createManyAndReturn({
@@ -154,6 +179,16 @@ app.post("/pack/generate",authMiddleware, async (req, res) => {
       falAiRequestId: requestIds[index].request_id,
     }))
   })
+  //if the request fails it will be handled by webhooks this is to prevent attacks with simalutanusy
+  await prismaClient.userCredit.update({
+    where: {
+      userId: req.userId!,
+    },
+    data: {
+      amount: { decrement: IMAGE_GENERATION_CREDITS * prompts.length },
+    },
+  });
+
   res.status(200).json({
     images: images.map((image) => image.id),
   })

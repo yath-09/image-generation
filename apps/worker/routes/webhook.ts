@@ -58,35 +58,47 @@ router.post("/fal-ai/webhook/image", async (req, res) => {
         imageUrl: req.body.payload.images[0].url,
       },
     });
+    //if failed then increment the credits back
+    // First find the image to get the userId
+    const outputImages = await prismaClient.outputImages.findFirst({
+      where: {
+        falAiRequestId: requestId,
+      },
+    });
+
+    if (!outputImages) {
+      console.error("No model found for requestId:", requestId);
+      res.status(404).json({ message: "Model not found" });
+      return;
+    }
+
+    await prismaClient.$transaction(async (tx) => {
+      //cresits per read not read at every step
+      const userCredit = await tx.userCredit.findUnique({
+        where: { userId: outputImages.userId },
+        select: { amount: true },
+      });
+
+      if (!userCredit || userCredit.amount < IMAGE_GENERATION_CREDITS) {
+        console.error("Insufficient credits for user:", outputImages.userId);
+        throw new Error("Insufficient credits");
+      }
+
+      await tx.userCredit.update({
+        where: { userId: outputImages.userId },
+        data: {
+          amount: { increment: IMAGE_GENERATION_CREDITS },
+        },
+      });
+
+      console.log(
+        "Updated model and decremented credits for user:",
+        outputImages.userId
+      );
+    });
+
     return;
   }
-  //if sucesfull first  decrement the credits
-  // First find the image to get the userId
-  const outputImages = await prismaClient.outputImages.findFirst({
-    where: {
-      falAiRequestId: requestId,
-    },
-  });
-
-  if (!outputImages) {
-    console.error("No model found for requestId:", requestId);
-    res.status(404).json({ message: "Model not found" });
-    return;
-  }
-
-  await prismaClient.userCredit.update({
-    where: {
-      userId: outputImages.userId,
-    },
-    data: {
-      amount: { decrement: IMAGE_GENERATION_CREDITS },
-    },
-  });
-
-  console.log(
-    "Updated model and decremented credits for user:",
-    outputImages.userId
-  );
 
   await prismaClient.outputImages.updateMany({
     where: {

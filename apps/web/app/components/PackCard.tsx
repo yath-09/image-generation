@@ -25,11 +25,15 @@ export function PackCard({ id, name, imageUrl1, imageUrl2, description, selected
         try {
             toast.success("Pack generation started successfully");
             const token = await getToken();
-            await axios.post(
+            const response=await axios.post(
                 `${BACKEND_URL}/pack/generate`,
                 { packId: id, modelId: selectedModelId },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
+            if(response.status==402){
+                alert("Not sufficent credits")
+                return;
+             }
         } catch (error) {
             toast.error("Failed to generate the pack");
             console.error("Pack Generation Error:", error);
@@ -45,8 +49,10 @@ export function PackCard({ id, name, imageUrl1, imageUrl2, description, selected
             <div className="text-xl font-bold pb-2">{name}</div>
             <div className="text-sm text-gray-700 line-clamp-5 overflow-hidden">{description}</div>
             <div className="flex justify-center mt-4">
-                <button onClick={handlePackGeneration} className="w-[50%] px-1 py-2 rounded-4xl my-2 hover:cursor-pointer md:w-full shadow-md transition-transform disabled:opacity-50 
-             bg-gradient-to-r from-blue-500 to-yellow-600 text-white">
+                <button onClick={handlePackGeneration} className="w-[50%] px-1 py-2 rounded-4xl my-2 hover:cursor-pointer md:w-full shadow-md transition-transform 
+             bg-gradient-to-r from-blue-500 to-yellow-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+             disabled={!selectedModelId?.trim()}  
+             >
                     Generate Pack
                 </button>
             </div>

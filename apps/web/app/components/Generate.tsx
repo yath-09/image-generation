@@ -32,7 +32,7 @@ export default function Generate({setActiveTab}: {setActiveTab: (tab: number) =>
         { headers: { Authorization: `Bearer ${token}` } }
       );
       //console.log(response)
-      if(response.status==411){
+      if(response.status==402){
          alert("Not sufficent credits")
          return;
       }
