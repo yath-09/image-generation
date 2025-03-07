@@ -8,7 +8,7 @@ import { Spinner } from "flowbite-react";
 import { ImagePlus } from "lucide-react";
 import { BACKEND_URL } from "../config";
 
-export default function Generate({setActiveTab}) {
+export default function Generate({setActiveTab}: {setActiveTab: (tab: number) => void}) {
   const [prompt, setPrompt] = useState("");
   const [selectedModel, setSelectedModel] = useState<string>();
   const [loading, setLoading] = useState(false);
