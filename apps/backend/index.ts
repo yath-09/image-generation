@@ -9,6 +9,8 @@ const app = express();
 import cors from "cors";
 import { authMiddleware } from "./middleware";
 
+const IMAGE_GENERATION_CREDITS=1;
+const TRAIN_GENERATION_CREDITS=10;
 
 const falAiModel=new FalAiModel();
 app.use(express.json());
@@ -78,6 +80,23 @@ app.post("/ai/generate",authMiddleware, async (req, res) => {
     res.status(404).json({ message: "Model not found" });
     return;
   }
+
+  //check  with the credits for the user to generate image 
+  const credits=await prismaClient.userCredit.findUnique(
+    {
+      where:{
+        userId:req.userId!,
+      }
+    }
+  );
+
+  if((credits?.amount || 0)<IMAGE_GENERATION_CREDITS){
+    res.status(411).json({
+      message:"Not enough credits",
+    })
+    return;
+  }
+
   const {request_id,response_url}=await falAiModel.generateImage(parsedBody.data.prompt,model?.tensorPath);
 
   const data = await prismaClient.outputImages.create({
@@ -186,9 +205,47 @@ app.get("/models", authMiddleware, async (req, res) => {
   });
   // console.log(models)
   res.json({
-    models,
+    models:models.map(
+     (({ falAiRequestId, tensorPath,zipUrl,type,age,eyeColor,bald,userId,ethinicity ,updatedAt, triggerWord,...rest }) => rest)
+    ),
   });
 });
+
+// Add this route to get user credits
+app.get(
+  "/user/credit",
+  authMiddleware,
+  async (req,res) => {
+    try {
+      if (!req.userId) {
+        res.status(401).json({ message: "Unauthorized" });
+        return;
+      }
+      //console.log(req.userId)
+
+      const userCredit = await prismaClient.userCredit.findUnique({
+        where: {
+          userId: req.userId,
+        },
+        select: {
+          amount: true,
+        },
+      });
+
+      res.json({
+        credits: userCredit?.amount || 0,
+      });
+      return;
+    } catch (error) {
+      console.error("Error fetching credits:", error);
+      res.status(500).json({
+        message: "Error fetching credits",
+        details: error instanceof Error ? error.message : "Unknown error",
+      });
+      return;
+    }
+  }
+);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

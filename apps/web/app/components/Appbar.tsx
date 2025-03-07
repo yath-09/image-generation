@@ -3,6 +3,7 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import Credit from "./Credits";
 export function Appbar() {
     const router=useRouter();
     return <nav className="fixed top-0 md:left-30 md:right-30 z-50 bg-gray-100 backdrop-blur-xl border-b border-gray-100 rounded-3xl">
@@ -22,9 +23,10 @@ export function Appbar() {
                     transition={{ duration: 0.5 }}
                     className="flex items-center space-x-8"
                 >
-                    <button className="text-[#444444] transition-colors hover:cursor-pointer">
+                    {/* <button className="text-[#444444] transition-colors hover:cursor-pointer">
                         About
-                    </button>
+                    </button> */}
+                    <Credit/>
                     <button className="text-[#444444] transition-colors hover:cursor-pointer">
                         Features
                     </button>

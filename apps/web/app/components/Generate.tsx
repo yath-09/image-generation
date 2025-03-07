@@ -26,11 +26,16 @@ export default function Generate({setActiveTab}: {setActiveTab: (tab: number) =>
     setLoading(true);
     try {
       const token = await getToken();
-      await axios.post(
+      const response=await axios.post(
         `${BACKEND_URL}/ai/generate`,
         { prompt, modelId: selectedModel, num: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      //console.log(response)
+      if(response.status==411){
+         alert("Not sufficent credits")
+         return;
+      }
       toast.success("Image generation in progress!");
       setPrompt("");
       setActiveTab(0)
