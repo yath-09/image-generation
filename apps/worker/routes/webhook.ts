@@ -171,20 +171,32 @@ router.post("/api/webhook/clerk", async (req, res) => {
     switch (eventType) {
       case "user.created":
       case "user.updated": {
-        await prismaClient.user.upsert({
-          where: { clerkId: id },
-          update: {
-            username: `${evt.data.first_name ?? ""} ${evt.data.last_name ?? ""}`.trim(),
-            email: evt.data.email_addresses[0].email_address,
-            profilePicture: evt.data.profile_image_url,
-          },
-          create: {
-            clerkId: id,
-            username: `${evt.data.first_name ?? ""} ${evt.data.last_name ?? ""}`.trim(),
-            email: evt.data.email_addresses[0].email_address,
-            profilePicture: evt.data.profile_image_url,
-          },
+        await prismaClient.$transaction(async (tx) => {
+          const user = await tx.user.upsert({
+            where: { clerkId: id },
+            update: {
+              username: `${evt.data.first_name ?? ""} ${evt.data.last_name ?? ""}`.trim(),
+              email: evt.data.email_addresses[0].email_address,
+              profilePicture: evt.data.profile_image_url,
+            },
+            create: {
+              clerkId: id,
+              username: `${evt.data.first_name ?? ""} ${evt.data.last_name ?? ""}`.trim(),
+              email: evt.data.email_addresses[0].email_address,
+              profilePicture: evt.data.profile_image_url,
+            },
+          });
+
+          await tx.userCredit.upsert({
+            where: { userId: user.clerkId || id },
+            update: {}, // No update required as amount should stay the same
+            create: {
+              userId: user.clerkId || id,
+              amount: 0, // Default credits for new users
+            },
+          });
         });
+
         console.log("User created/updated")
         break;
       }
