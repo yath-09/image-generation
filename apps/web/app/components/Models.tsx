@@ -42,33 +42,42 @@ export function SelectModel({
     }, []);
 
     return (
-        <div className="max-w-4xl my-6">
-            {modelLoading ? (
-                <div className="flex justify-center">
-                    <Spinner aria-label="Large spinner example" size="lg" />
+        <div className="max-w-5xl my-6">
+        {modelLoading ? (
+          <div className="flex justify-center">
+            <Spinner aria-label="Loading models" size="lg" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {models
+              .filter((model) => model.trainingStatus === "GENERATED")
+              .map((model) => (
+                <div
+                  key={model.id}
+                  className={`relative cursor-pointer rounded-xl shadow-lg overflow-hidden hover:scale-105 transition-transform ${
+                    selectedModel === model.id ? "" : ""
+                  }`}
+                  onClick={() => setSelectedModel(model.id)}
+                >
+                  {/* Image */}
+                  <img src={model.thumbnail} alt={model.name} className={`w-full h-full object-cover rounded-xl ${
+                    selectedModel === model.id ? "border-green-600 border-4" : "border-gray-300"
+                  }`} />
+      
+                  {/* Overlay */}
+                  <div className={`absolute inset-0 flex items-center justify-center transition-opacity`}>
+                    <h3 className="text-lg font-bold text-white text-center">{model.name}</h3>
+                  </div>
                 </div>
-            ) : (
-                <div className="grid grid-cols-3 gap-4">
-                    {models
-                        .filter((model) => model.trainingStatus === "GENERATED")
-                        .map((model) => (
-                            <div
-                                key={model.id}
-                                className={`cursor-pointer border p-1 rounded-lg shadow-md transition-transform hover:scale-105 ${selectedModel === model.id ? "border-yellow-400 bg-gradient-to-r from-[#FBA87C] to-yellow-400" : "border-gray-300"
-                                    }`}
-                                onClick={() => setSelectedModel(model.id)}
-                            >
-                                <img src={model.thumbnail} alt={model.name} className="rounded-md w-full h-[80%]" />
-                                <h3 className={`text-center font-medium h-[10%] ${selectedModel === model.id ? "text-white":"text-gray-800"}`}>{model.name}</h3>
-                            </div>
-
-                        ))}
-                </div>
-            )}
-            {/* for not trained models */}
-            {models.some((model) => model.trainingStatus !== "GENERATED") && (
-                <p className="text-gray-500 mt-4 text-center">More models are being trained...</p>
-            )}
-        </div>
+              ))}
+          </div>
+        )}
+        
+        {/* Message for non-trained models */}
+        {models.some((model) => model.trainingStatus !== "GENERATED") && (
+          <p className="text-gray-500 mt-6 text-center">More models are being trained...</p>
+        )}
+      </div>
+      
     );
 }
