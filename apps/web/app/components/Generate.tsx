@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { Spinner } from "flowbite-react";
 import { ImagePlus } from "lucide-react";
 import { BACKEND_URL } from "../config";
+import { useCredit } from "../hooks/useCredits";
 
 export default function Generate({setActiveTab}: {setActiveTab: (tab: number) => void}) {
   const [prompt, setPrompt] = useState("");
@@ -14,7 +15,7 @@ export default function Generate({setActiveTab}: {setActiveTab: (tab: number) =>
   const [loading, setLoading] = useState(false);
 
   const { getToken } = useAuth();
-
+  const { refreshCredits } = useCredit();
   const handleGenerate = async () => {
     //not promt enter
     if (!prompt.trim()) {
@@ -33,13 +34,18 @@ export default function Generate({setActiveTab}: {setActiveTab: (tab: number) =>
       );
       //console.log(response)
       if(response.status==402){
-         alert("Not sufficent credits")
+         toast.error("Not sufficent credits")
          return;
       }
       toast.success("Image generation in progress!");
+      refreshCredits(); // 🆕 Refresh credits after success
       setPrompt("");
       setActiveTab(0)
-    } catch (error) {
+    } catch (error:any) {
+      if(error?.response?.status ==402){
+        toast.error("Not sufficent credits")
+        return;
+    }
       toast.error("Failed to generate image. Please try again.");
     } finally {
       setLoading(false);

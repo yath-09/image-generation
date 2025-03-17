@@ -3,6 +3,7 @@ import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { BACKEND_URL } from "../config";
+import { useCredit } from "../hooks/useCredits";
 
 // Define Pack Type
 export interface TPack {
@@ -15,7 +16,7 @@ export interface TPack {
 
 export function PackCard({ id, name, imageUrl1, imageUrl2, description, selectedModelId }: TPack & { selectedModelId: string }) {
     const { getToken } = useAuth();
-
+    const { refreshCredits } = useCredit();
     const handlePackGeneration = async () => {
         if (!selectedModelId) {
             toast.error("Please select a model first!");
@@ -23,7 +24,7 @@ export function PackCard({ id, name, imageUrl1, imageUrl2, description, selected
         }
 
         try {
-            toast.success("Pack generation started successfully");
+            
             const token = await getToken();
             const response=await axios.post(
                 `${BACKEND_URL}/pack/generate`,
@@ -31,12 +32,18 @@ export function PackCard({ id, name, imageUrl1, imageUrl2, description, selected
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             if(response.status==402){
-                alert("Not sufficent credits")
+                toast.error("Not sufficent credits")
                 return;
              }
-        } catch (error) {
+            toast.success("Pack generation started successfully");
+            refreshCredits()
+        } catch (error:any) {
+            if(error?.response?.status ==402){
+                toast.error("Not sufficent credits")
+                return;
+            }
             toast.error("Failed to generate the pack");
-            console.error("Pack Generation Error:", error);
+            //console.error("Pack Generation Error:", error);
         }
     };
 

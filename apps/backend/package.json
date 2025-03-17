@@ -23,11 +23,14 @@
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.8",
     "@types/nodemon": "^1.19.6",
+    "body-parser": "^1.20.3",
     "common": "*",
     "cors": "^2.8.5",
     "db": "*",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "razorpay": "^2.9.6"
   }
 }

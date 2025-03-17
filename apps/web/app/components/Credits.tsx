@@ -10,7 +10,7 @@ export default function Credit() {
     return (
         <>
             {loading ? (
-                <span className="text-[#444444] transition-colors hover:cursor-pointer animate-pulse">Loading...</span>
+                <span className="text-[#444444] transition-colors hover:cursor-pointer animate-pulse">...</span>
             ) : (
                 <div className="flex items-center space-x-2 px-4 py-2">
                     <span className="transition-colors hover:cursor-pointer font-medium">{credits} </span>

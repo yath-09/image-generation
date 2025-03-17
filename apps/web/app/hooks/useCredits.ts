@@ -1,39 +1,29 @@
-
 import { useAuth } from "@clerk/nextjs";
 import { BACKEND_URL } from "../config";
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 import axios from "axios";
 
-export function useCredit(){
-    const {getToken}=useAuth();
-    const [credits,setCredits]=useState(0);
-    const [loading, setLoading] = useState(true);
+export function useCredit() {
+  const { getToken } = useAuth();
 
-    const fetchCredits = async () => {
-        try {
-          setLoading(true);
-          const token = await getToken();
-          if (!token) return;
-    
-          const response = await axios.get(`${BACKEND_URL}/user/credit`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-    
-          if (response.data) {
-            setCredits(response?.data?.credits || 0);
-          }
-        } catch (error) {
-          console.error("Error fetching credits:", error);
-        } finally {
-          setLoading(false);
-        }
-    };
+  const fetchCredits = async () => {
+    const token = await getToken();
+    if (!token) return 0;
 
-    useEffect(()=>{
-        fetchCredits()
-    },[])
+    const response = await axios.get(`${BACKEND_URL}/user/credit`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-    return {credits,loading};
+    return response.data?.credits || 0;
+  };
+
+  const { data: credits, error, mutate } = useSWR("/user/credit", fetchCredits, {
+    revalidateOnFocus: false, // Don't re-fetch when tab is focused
+  });
+
+  return {
+    credits: credits ?? 0,
+    loading: !credits && !error,
+    refreshCredits: mutate, // Call this after a successful transaction
+  };
 }
