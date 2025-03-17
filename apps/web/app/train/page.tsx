@@ -14,7 +14,11 @@ interface TrainingData {
     images: File[];
 }
 import { useAuth } from '@clerk/nextjs';
+import toast from 'react-hot-toast';
+import { ImagePlus } from 'lucide-react';
+import { Spinner } from 'flowbite-react';
 export default function Train() {
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<TrainingData>({
         name: '',
         type: ModelTypeEnum.Man,
@@ -25,15 +29,16 @@ export default function Train() {
         images: [],
     });
 
-    const {getToken}=useAuth(); 
+    const { getToken } = useAuth();
 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.images || formData.images.length === 0) {
-            alert("Please upload at least one image.");
+            toast.error("Please upload at least one image.");
             return;
         }
+        setLoading(true);
         try {
             // 1. Create a ZIP file with all images
             const zip = new JSZip();
@@ -53,8 +58,8 @@ export default function Train() {
             await axios.put(data.url, zipBlob, {
                 headers: { "Content-Type": "application/zip" },
             });
-            alert("Images uplaoded succesfully");
-            
+            //alert("Images uplaoded succesfully");
+
 
             // 4. Send form data with the ZIP file URL considering the imp point of mathcing the spellings of data with the backend
             const uploadData = {
@@ -68,29 +73,32 @@ export default function Train() {
             };
 
             //console.log(uploadData);
-            const token=await getToken();
-            const response=await axios.post(`${BACKEND_URL}/ai/training`, uploadData,
+            const token = await getToken();
+            const response = await axios.post(`${BACKEND_URL}/ai/training`, uploadData,
                 {
-                    headers:{
-                        Authorization:`Bearer ${token}`
+                    headers: {
+                        Authorization: `Bearer ${token}`
                     }
                 }
             );
             //console.log(response)
 
             //after successfull compeltion of the code
-            alert("Training data uploaded successfully");
+            toast.success("Data uploaded successfully for Training Model");
             handleClearForm();
         } catch (error) {
             console.error("Upload failed:", error);
-            alert("Failed to upload training data. Please try again.");
+            toast.error("Failed to upload training data. Please try again.");
+        }
+        finally {
+            setLoading(false);
         }
     };
 
 
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files &&  e.target.files.length > 0) {
+        if (e.target.files && e.target.files.length > 0) {
             setFormData((prev) => ({
                 ...prev,
                 images: Array.from(e.target.files as FileList),
@@ -229,16 +237,22 @@ export default function Train() {
                     <button
                         type="button"
                         onClick={handleClearForm}
-                         className="bg-gradient-to-r from-gray-400 to-gray-600 text-white px-4 py-2 rounded transition-opacity hover:opacity-80"
+                        className="bg-gradient-to-r from-gray-400 to-gray-600 text-white px-4 py-2 rounded transition-opacity hover:opacity-80"
+                        disabled={loading}
                     >
                         Cancel
                     </button>
-                    <button
-                        type="submit"
-                        className="bg-gradient-to-r from-blue-400 to-yellow-600 text-white px-4 py-2 rounded transition-opacity hover:opacity-80"
-                    >
-                        Create Model
-                    </button>
+                    <div className="flex">
+                        <button
+                            type="submit"
+                            className="bg-gradient-to-r from-blue-400 to-yellow-600 text-white px-4 py-2 rounded transition-opacity hover:opacity-80 flex items-center gap-2"
+                            disabled={loading} // Disable button when loading
+                        >
+                            {loading && <Spinner size="sm" />}
+                            {loading ? "Generating..." : "Create Model"}
+                        </button>
+                    </div>
+
                 </div>
             </form>
         </div>
