@@ -1,13 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SelectModel } from "./Models";
 import { PackCard, TPack } from "./PackCard";
 import { motion } from "framer-motion";
 import { Package2 } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
+import axios from "axios";
+import { BACKEND_URL } from "../config";
+
+interface TModel {
+    id: string;
+    thumbnail: string;
+    name: string;
+    trainingStatus: "GENERATED" | "PENDING";
+}
 
 export function PacksClient({ packs, loading }: { packs: TPack[]; loading: boolean }) {
+    const { getToken } = useAuth();
     const [selectedModelId, setSelectedModelId] = useState<string | undefined>();
+    const [models, setModels] = useState<TModel[]>([]);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const token = await getToken();
+                const response = await axios.get(`${BACKEND_URL}/models`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setModels(response.data.models || []);
+            } catch (error) {
+                console.error("Failed to fetch models:", error);
+            }
+        })();
+    }, [getToken]);
+
+    const selectedModel = models.find(model => model.id === selectedModelId);
 
     return (
         <div className="max-w-6xl mx-auto">
@@ -75,7 +103,12 @@ export function PacksClient({ packs, loading }: { packs: TPack[]; loading: boole
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ duration: 0.3, delay: index * 0.1 }}
                                 >
-                                    <PackCard selectedModelId={selectedModelId || ""} {...pack} />
+                                    <PackCard
+                                        selectedModelId={selectedModelId || ""}
+                                        modelName={selectedModel?.name}
+                                        modelThumbnail={selectedModel?.thumbnail}
+                                        {...pack}
+                                    />
                                 </motion.div>
                             ))}
                         </motion.div>

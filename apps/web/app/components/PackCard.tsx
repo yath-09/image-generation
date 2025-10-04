@@ -6,8 +6,9 @@ import toast from "react-hot-toast";
 import { BACKEND_URL } from "../config";
 import { useCredit } from "../hooks/useCredits";
 import { motion } from "framer-motion";
-import { Package2, Sparkles } from "lucide-react";
+import { Package2, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
+import { ConfirmationModal } from "./ConfirmationModal";
 
 // Define Pack Type
 export interface TPack {
@@ -18,10 +19,25 @@ export interface TPack {
     description: string;
 }
 
-export function PackCard({ id, name, imageUrl1, imageUrl2, description, selectedModelId }: TPack & { selectedModelId: string }) {
+export function PackCard({
+    id,
+    name,
+    imageUrl1,
+    imageUrl2,
+    description,
+    selectedModelId,
+    modelName,
+    modelThumbnail
+}: TPack & {
+    selectedModelId: string;
+    modelName?: string;
+    modelThumbnail?: string;
+}) {
     const { getToken } = useAuth();
     const { refreshCredits } = useCredit();
     const [isGenerating, setIsGenerating] = useState(false);
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
     const handlePackGeneration = async () => {
         if (!selectedModelId) {
@@ -29,6 +45,10 @@ export function PackCard({ id, name, imageUrl1, imageUrl2, description, selected
             return;
         }
 
+        setShowConfirmation(true);
+    };
+
+    const handleConfirmGeneration = async () => {
         setIsGenerating(true);
         try {
             const token = await getToken();
@@ -43,6 +63,7 @@ export function PackCard({ id, name, imageUrl1, imageUrl2, description, selected
             }
             toast.success("Pack generation started successfully");
             refreshCredits();
+            setShowConfirmation(false);
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response?.status === 402) {
                 toast.error("Insufficient credits");
@@ -96,16 +117,32 @@ export function PackCard({ id, name, imageUrl1, imageUrl2, description, selected
                     <h3 className="text-xl font-bold text-[#222222] mb-2 line-clamp-1">
                         {name}
                     </h3>
-                    <p className="text-sm text-[#666666] line-clamp-3 leading-relaxed">
-                        {description}
-                    </p>
+                    <div className="relative">
+                        <p
+                            className={`text-sm text-[#666666] leading-relaxed cursor-pointer hover:text-[#333333] transition-colors ${isDescriptionExpanded ? '' : 'line-clamp-3'
+                                }`}
+                            onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                        >
+                            {description}
+                        </p>
+                        <div
+                            className="absolute bottom-0 right-0 bg-white pl-2 cursor-pointer"
+                            onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                        >
+                            {isDescriptionExpanded ? (
+                                <ChevronUp className="w-4 h-4 text-[#666666] hover:text-[#333333] transition-colors" />
+                            ) : (
+                                <ChevronDown className="w-4 h-4 text-[#666666] hover:text-[#333333] transition-colors" />
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 {/* CTA Button */}
                 <motion.button
                     onClick={handlePackGeneration}
                     disabled={!selectedModelId?.trim() || isGenerating}
-                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-400 to-[#FBA87C] text-white font-semibold rounded-xl shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl group-hover:scale-105"
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-400 to-[#FBA87C] text-white font-semibold rounded-xl shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl group-hover:scale-105 hover:cursor-pointer"
                     whileHover={{ scale: !selectedModelId?.trim() || isGenerating ? 1 : 1.02 }}
                     whileTap={{ scale: !selectedModelId?.trim() || isGenerating ? 1 : 0.98 }}
                 >
@@ -129,6 +166,19 @@ export function PackCard({ id, name, imageUrl1, imageUrl2, description, selected
                     </p>
                 )}
             </div>
+
+            {/* Confirmation Modal */}
+            <ConfirmationModal
+                isOpen={showConfirmation}
+                onClose={() => setShowConfirmation(false)}
+                onConfirm={handleConfirmGeneration}
+                packName={name}
+                packImage1={imageUrl1}
+                packImage2={imageUrl2}
+                modelName={modelName || "Unknown Model"}
+                modelThumbnail={modelThumbnail || ""}
+                isGenerating={isGenerating}
+            />
         </motion.div>
     );
 }
