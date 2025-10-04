@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 
 const images = [
   {
-    url: "https://v3.fal.media/files/lion/uAxE98jeacYujt9zTb6k__95a559520afe484fb0e0a5c25f9b551c.jpg",
+    url: "https://v3.fal.media/files/penguin/TMkHYjXnDvD1sV4ybhEPH_9aa88ba2f49f493c8079376f1d2b531b.jpg",
     caption: "Family Moments",
   },
   {
@@ -38,10 +39,11 @@ export const ImageCarousel = () => {
           transition={{ duration: 0.1, ease: "easeInOut" }}
           className="absolute inset-0"
         >
-          <img
-            src={images[index]?.url}
-            alt={images[index]?.caption}
-            className="w-full h-full object-cover rounded-2xl"
+          <Image
+            src={images[index]?.url || ""}
+            alt={images[index]?.caption || ""}
+            fill
+            className="object-cover rounded-2xl"
           />
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
             <p className="text-white text-2xl font-light">{images[index]?.caption}</p>
