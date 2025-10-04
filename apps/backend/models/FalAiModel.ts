@@ -1,18 +1,18 @@
 import { fal } from "@fal-ai/client";
 
-export class FalAiModel{
-    constructor(){
-        
+export class FalAiModel {
+    constructor() {
+
     }
 
-    public async generateImage(prompt:string,tensorPath:string){
+    public async generateImage(prompt: string, tensorPath: string) {
         //commenting now to check the flow and then check the fal the fal ai model
-        const {request_id,response_url}=await fal.queue.submit("fal-ai/flux-lora",{
-            input:{
-                prompt:prompt,
-                loras:[{path:tensorPath,scale:1}]
+        const { request_id, response_url } = await fal.queue.submit("fal-ai/flux-lora", {
+            input: {
+                prompt: prompt,
+                loras: [{ path: tensorPath, scale: 1 }]
             },
-            webhookUrl:`${process.env.WEBHOOK_BASE_URL}/fal-ai/webhook/image`  
+            webhookUrl: `${process.env.WEBHOOK_BASE_URL}/fal-ai/webhook/image`
         })
 
         // the base url is now a microservcie worker  running for the image updation 
@@ -25,7 +25,7 @@ export class FalAiModel{
         }
     }
 
-    public async trainModel(zipUrl:string,triggerWord:string){
+    public async trainModel(zipUrl: string, triggerWord: string) {
 
         // const {request_id,response_url}=await fal.queue.submit("fal-ai/flux-lora-fast-training",{
         //     input:{
@@ -36,8 +36,8 @@ export class FalAiModel{
         // })
 
         return {
-            request_id:"",
-            response_url:""
+            request_id: "",
+            response_url: ""
         }
     }
     //creataing the thumbnail
@@ -49,9 +49,9 @@ export class FalAiModel{
             },
         })
         return {
-          imageUrl: response.data.images[0].url
+            imageUrl: response.data.images[0].url
         }
-      }
-    
+    }
+
 }
 
