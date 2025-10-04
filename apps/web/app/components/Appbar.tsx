@@ -23,7 +23,7 @@ export function Appbar() {
 
     return <motion.nav
         className={`fixed top-0 z-50 backdrop-blur-xl border-b transition-all duration-500 ease-in-out ${isScrolled
-            ? 'md:left-30 md:right-30 rounded-3xl bg-gradient-to-r from-blue-400/20 to-[#FBA87C]/20 border-blue-400/30'
+            ? 'md:left-30 md:right-30 rounded-3xl bg-gradient-to-r from-blue-400/35 to-[#FBA87C]/35 border-blue-400/30'
             : 'left-0 right-0 rounded-none bg-gray-100 border-gray-100'
             }`}
         initial={{ y: 0 }}
@@ -51,7 +51,7 @@ export function Appbar() {
                     </button> */}
                     {isAuthenticated && <Credit />}
                     <button className={`transition-colors hover:cursor-pointer ${isScrolled ? 'text-[#444444] hover:text-[#222222]' : 'text-[#444444] hover:text-[#222222]'
-                        }`}>
+                        }`} onClick={() => router.push('/dashboard')}>
                         Features
                     </button>
                     <SignedOut>

@@ -3,32 +3,93 @@
 import { useState } from "react";
 import { SelectModel } from "./Models";
 import { PackCard, TPack } from "./PackCard";
+import { motion } from "framer-motion";
+import { Package2 } from "lucide-react";
 
 export function PacksClient({ packs, loading }: { packs: TPack[]; loading: boolean }) {
     const [selectedModelId, setSelectedModelId] = useState<string | undefined>();
 
     return (
-        <div className="flex justify-center">
-            <div className="pt-4 max-w-2xl w-full">
-                <h2 className="text-3xl font-semibold mb-2 text-black">Step-1 Select Model</h2>
-                <h6 className=" mb-4 text-gray-600">Choose an AI model to generate your images</h6>
-                
-                <SelectModel selectedModel={selectedModelId} setSelectedModel={setSelectedModelId} />
-
-                <h2 className="text-3xl font-semibold mb-2 text-black">Step-2 Select Pack</h2>
-                <h6 className=" mb-4  text-gray-600">Chose a pack to generate images with</h6>
-                {loading ? (
-                    <div className="text-center text-gray-500">Loading packs...</div>
-                ) : packs.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-                        {packs.map((pack) => (
-                            <PackCard key={pack.id} selectedModelId={selectedModelId || ""} {...pack} />
-                        ))}
+        <div className="max-w-6xl mx-auto">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="space-y-8"
+            >
+                {/* Header */}
+                <div className="text-center">
+                    <div className="flex items-center justify-center mb-4">
+                        <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-[#FBA87C] rounded-full flex items-center justify-center">
+                            <Package2 className="w-6 h-6 text-white" />
+                        </div>
                     </div>
-                ) : (
-                    <div className="text-center text-gray-500">No packs available.</div>
-                )}
-            </div>
+                    <h2 className="text-3xl font-bold text-[#222222] mb-2">AI Image Packs</h2>
+                    <p className="text-[#666666]">Choose from curated packs to generate stunning images</p>
+                </div>
+
+                {/* Step 1: Model Selection */}
+                <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                    <div className="flex items-center mb-4">
+                        <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-[#FBA87C] rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
+                            1
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-semibold text-[#222222]">Select Model</h3>
+                            <p className="text-[#666666] text-sm">Choose an AI model to generate your images</p>
+                        </div>
+                    </div>
+                    <SelectModel selectedModel={selectedModelId} setSelectedModel={setSelectedModelId} />
+                </div>
+
+                {/* Step 2: Pack Selection */}
+                <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                    <div className="flex items-center mb-6">
+                        <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-[#FBA87C] rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
+                            2
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-semibold text-[#222222]">Select Pack</h3>
+                            <p className="text-[#666666] text-sm">Choose a pack to generate images with</p>
+                        </div>
+                    </div>
+
+                    {loading ? (
+                        <div className="flex justify-center py-12">
+                            <div className="flex flex-col items-center space-y-4">
+                                <div className="w-8 h-8 border-4 border-[#FBA87C] border-t-transparent rounded-full animate-spin"></div>
+                                <p className="text-[#666666]">Loading packs...</p>
+                            </div>
+                        </div>
+                    ) : packs.length > 0 ? (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                        >
+                            {packs.map((pack, index) => (
+                                <motion.div
+                                    key={pack.id}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                                >
+                                    <PackCard selectedModelId={selectedModelId || ""} {...pack} />
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    ) : (
+                        <div className="text-center py-12">
+                            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-blue-400 to-[#FBA87C] rounded-full flex items-center justify-center">
+                                <Package2 className="w-8 h-8 text-white" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-[#222222] mb-2">No packs available</h3>
+                            <p className="text-[#666666]">Check back later for new image packs!</p>
+                        </div>
+                    )}
+                </div>
+            </motion.div>
         </div>
     );
 }

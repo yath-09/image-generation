@@ -1,9 +1,13 @@
 
 import { useAuth } from "@clerk/nextjs";
+import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { BACKEND_URL } from "../config";
 import { useCredit } from "../hooks/useCredits";
+import { motion } from "framer-motion";
+import { Package2, Sparkles } from "lucide-react";
+import Image from "next/image";
 
 // Define Pack Type
 export interface TPack {
@@ -17,52 +21,114 @@ export interface TPack {
 export function PackCard({ id, name, imageUrl1, imageUrl2, description, selectedModelId }: TPack & { selectedModelId: string }) {
     const { getToken } = useAuth();
     const { refreshCredits } = useCredit();
+    const [isGenerating, setIsGenerating] = useState(false);
+
     const handlePackGeneration = async () => {
         if (!selectedModelId) {
             toast.error("Please select a model first!");
             return;
         }
 
+        setIsGenerating(true);
         try {
-            
             const token = await getToken();
-            const response=await axios.post(
+            const response = await axios.post(
                 `${BACKEND_URL}/pack/generate`,
                 { packId: id, modelId: selectedModelId },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            if(response.status==402){
-                toast.error("Not sufficent credits")
+            if (response.status === 402) {
+                toast.error("Insufficient credits");
                 return;
-             }
+            }
             toast.success("Pack generation started successfully");
-            refreshCredits()
-        } catch (error:any) {
-            if(error?.response?.status ==402){
-                toast.error("Not sufficent credits")
+            refreshCredits();
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response?.status === 402) {
+                toast.error("Insufficient credits");
                 return;
             }
             toast.error("Failed to generate the pack");
-            //console.error("Pack Generation Error:", error);
+        } finally {
+            setIsGenerating(false);
         }
     };
 
     return (
-        <div className="border-2 rounded-xl p-2 hover:border-yellow-400 transition-colors">
-            <div className="flex p-2 gap-2">
-                <img src={imageUrl1} alt="Pack 1" className="rounded w-1/2" />
-                <img src={imageUrl2} alt="Pack 2" className="rounded w-1/2" />
+        <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
+        >
+            {/* Image Preview Section */}
+            <div className="relative">
+                <div className="flex h-48">
+                    <div className="relative w-1/2">
+                        <Image
+                            src={imageUrl1}
+                            alt={`${name} preview 1`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 50vw, 25vw"
+                        />
+                    </div>
+                    <div className="relative w-1/2">
+                        <Image
+                            src={imageUrl2}
+                            alt={`${name} preview 2`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 50vw, 25vw"
+                        />
+                    </div>
+                </div>
+
+                {/* Pack Icon Overlay */}
+                <div className="absolute top-3 left-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
+                    <Package2 className="w-4 h-4 text-[#FBA87C]" />
+                </div>
             </div>
-            <div className="text-xl font-bold pb-2">{name}</div>
-            <div className="text-sm text-gray-700 line-clamp-5 overflow-hidden">{description}</div>
-            <div className="flex justify-center mt-4">
-                <button onClick={handlePackGeneration} className="w-[50%] px-1 py-2 rounded-4xl my-2 hover:cursor-pointer md:w-full shadow-md transition-transform 
-             bg-gradient-to-r from-blue-500 to-yellow-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-             disabled={!selectedModelId?.trim()}  
-             >
-                    Generate Pack
-                </button>
+
+            {/* Content Section */}
+            <div className="p-6">
+                <div className="mb-4">
+                    <h3 className="text-xl font-bold text-[#222222] mb-2 line-clamp-1">
+                        {name}
+                    </h3>
+                    <p className="text-sm text-[#666666] line-clamp-3 leading-relaxed">
+                        {description}
+                    </p>
+                </div>
+
+                {/* CTA Button */}
+                <motion.button
+                    onClick={handlePackGeneration}
+                    disabled={!selectedModelId?.trim() || isGenerating}
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-400 to-[#FBA87C] text-white font-semibold rounded-xl shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-xl group-hover:scale-105"
+                    whileHover={{ scale: !selectedModelId?.trim() || isGenerating ? 1 : 1.02 }}
+                    whileTap={{ scale: !selectedModelId?.trim() || isGenerating ? 1 : 0.98 }}
+                >
+                    {isGenerating ? (
+                        <>
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            <span>Generating...</span>
+                        </>
+                    ) : (
+                        <>
+                            <Sparkles className="w-4 h-4" />
+                            <span>Generate Pack</span>
+                        </>
+                    )}
+                </motion.button>
+
+                {/* Status Message */}
+                {!selectedModelId?.trim() && (
+                    <p className="text-xs text-[#666666] text-center mt-2">
+                        Select a model first to generate this pack
+                    </p>
+                )}
             </div>
-        </div>
+        </motion.div>
     );
 }

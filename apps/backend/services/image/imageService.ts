@@ -1,7 +1,7 @@
 import { prismaClient } from "db";
 
 export class ImageService {
-    static async getBulkImages(ids: string[], userId: string, limit: string = "20", offset: string = "0") {
+    static async getBulkImages(ids: string[], userId: string, limit: string = "10", pageNumber: string = "1") {
         const imagesData = await prismaClient.outputImages.findMany({
             where: {
                 id: {
@@ -15,8 +15,8 @@ export class ImageService {
             orderBy: {
                 createdAt: 'desc'
             },
-            skip: parseInt(offset),
-            take: parseInt(limit),
+            skip: (parseInt(pageNumber, 10) - 1) * parseInt(limit, 10),
+            take: parseInt(limit, 10),
         });
 
         return {
