@@ -22,13 +22,18 @@ const images = [
 
 export const ImageCarousel = () => {
   const [index, setIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   const nextSlide = () => setIndex((prev) => (prev + 1) % images.length);
   const prevSlide = () =>
     setIndex((prev) => (prev - 1 + images.length) % images.length);
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto h-[500px] overflow-hidden rounded-2xl bg-gray-900">
+    <div
+      className="relative w-full max-w-4xl mx-auto h-[500px] overflow-hidden rounded-2xl bg-gray-900"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {/* Image Transition */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -45,9 +50,25 @@ export const ImageCarousel = () => {
             fill
             className="object-cover rounded-2xl"
           />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
-            <p className="text-white text-2xl font-light">{images[index]?.caption}</p>
-          </div>
+          {/* Hover Overlay with Text */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <motion.div
+              className="absolute bottom-0 left-0 right-0 p-6"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{
+                y: isHovered ? 0 : 20,
+                opacity: isHovered ? 1 : 0
+              }}
+              transition={{ duration: 0.3, ease: "easeOut", delay: isHovered ? 0.1 : 0 }}
+            >
+              <p className="text-white text-2xl font-light">{images[index]?.caption}</p>
+            </motion.div>
+          </motion.div>
         </motion.div>
       </AnimatePresence>
 
